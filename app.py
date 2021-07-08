@@ -6,6 +6,7 @@ app = Flask(__name__)
 def hello_world():
     return "<p>Hello, World!</p>"
 
+
 # NO LOGIN PAGES
 
 @app.route("/")
@@ -23,3 +24,14 @@ def nologin_Locali():
 @app.route("/contatti")
 def nologin_Contatti():
     return render_template("nologin_contatti.html")
+
+
+# LOGIN PAGE
+@app.route("/login")
+def Login():
+    return render_template("loginPage.html")
+
+# REGISTRATI
+@app.route("/registrati")
+def Register():
+    return render_template("register.html")

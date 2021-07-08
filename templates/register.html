@@ -23,12 +23,8 @@
 {% endblock %}
 
 
-
-<!-- Add code to the body -->
 {% block body %}
-
 <br> <br>
-
 <div class="container">
     <div class="row">
         <div class="col-lg-3 col-md-2"></div>
@@ -37,7 +33,7 @@
                 <i class="fa fa-key" aria-hidden="true"></i>
             </div>
             <h1 align="center">
-                Login
+                Registrati
             </h1>
 
             <br> <br>
@@ -49,6 +45,12 @@
                             <input type="text" class="form-control" placeholder="Username">
                         </div>
                         <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Email">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Numero di telefono">
+                        </div>
+                        <div class="form-group">
                             <input type="password" class="form-control" placeholder="Password">
                         </div>
 
@@ -58,7 +60,7 @@
                             </div>
                             <br>
                             <div class="col-lg-6 login-btm login-button">
-                                <button type="submit" class="btn btn-dark">LOGIN</button>
+                                <button type="submit" class="btn btn-dark">REGISTRATI</button>
                             </div>
                         </div>
                     </form>
@@ -68,6 +70,5 @@
         </div>
     </div>
 </div>
-
 
 {% endblock %}

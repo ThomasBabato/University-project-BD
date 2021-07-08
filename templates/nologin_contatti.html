@@ -14,16 +14,10 @@
         <a class="nav-link" href="{{url_for('nologin_Contatti')}}">Contatti</a>
     </li>
     <li class="nav-item">
-        <form class="form-inline my-2 my-lg-0" action="" method="post">
-            <!-- Input per l'area riservata dell'utente autenticato -->
-            <input id="login" class="btn btn-light" type="submit" disabled name="Login" value="Login" />
-        </form>
+        <a class="nav-link" href="{{url_for('Login')}}">Login</a>
     </li>
     <li class="nav-item">
-        <form class="form-inline my-2 my-lg-0" action="" method="post">
-            <!-- Input per l'area riservata dell'utente autenticato -->
-            <input id="registrati" class="btn btn-light" type="submit" disabled name="Registrati" value="Registrati" />
-        </form>
+        <a class="nav-link" href="{{url_for('Register')}}">Registrati</a>
     </li>
 </ul>
 {% endblock %}
