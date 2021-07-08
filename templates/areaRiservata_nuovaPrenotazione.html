@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+<!-- Links in the navbar -->
+{% block navbar %}
+<ul class="navbar-nav navbar-light">
+    <li class="nav-item">
+        <a class="nav-link" href="{{url_for('nologin_home')}}">Home</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{url_for('le_mie_prenotazioni')}}">Le mie prenotazioni</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{url_for('nuova_prenotazione')}}">Nuova prenotazione</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{url_for('impostazioni')}}">Impostazioni</a>
+    </li>
+    <!--  QUI SERVIREBBE UN TASTO LOGOUT - DA IMPLEMENTARE IN FASE DI FUSIONE CON IL BACKEND
+    <li class="nav-item">
+        <form class="form-inline my-2 my-lg-0" action="" method="post">
+
+            <input id="login" class="btn btn-light" type="submit" disabled name="Login" value="Login" />
+        </form>
+    </li>
+    -->
+</ul>
+{% endblock %}
+
+
+<!-- Block body -->
+{% block body %}
+<h1 align="center"> Effettua una nuova prenotazione </h1>
+
+{% endblock %}
