@@ -1,4 +1,4 @@
-#!/home/user/Documents/Uni/Unive/2/BaseDati/PROGETTO/venv/bin/python3
+#!/home/lore/Documenti/GitHub/University-project-BD/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
