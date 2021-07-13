@@ -123,8 +123,11 @@ def RegisterFunction():
     if result_checkEmail:
         flash("Email già usata da un altro utente")
         render_template("register.html")
+
+
     #creiamo la query per inserire il nuovo utente
-    s = utenti.insert().values(nome=nome,cognome=cognome,email=email,password=password) #TODO: Aggiungere ruolo!
+    s = utenti.insert().values(nome,cognome,email,password) #TODO: Aggiungere ruolo!
+    #result_insertUtente = con.execute(s, request.form['nome'], request.form['cognome'], request.form['email'], request.form['password'])
     result_insertUtente = con.execute(s, nome=request.form['nome'], cognome=request.form['cognome'], email=request.form['email'], password=request.form['password'])
     con.close() #connessione chiusa
     flash("Registrazione eseguito correttamente!")
