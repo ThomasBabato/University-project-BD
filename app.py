@@ -22,7 +22,7 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
     con = engine.connect()
     con.execute("commit")
     con.execute("create database gym")
-    con.execute("set global activate_all_roles_on_login = on")  # attivazione di tutti i ruoli
+    #con.execute("set global activate_all_roles_on_login = on")  # attivazione di tutti i ruoli  (da decommentare dopo!)
     con.close()
 else:
     #TODO: da elimianre? momentaneamente lascio, può tornare utile.
@@ -53,7 +53,7 @@ corsi = Table('corsi',metadata,
 
 corsi_seguiti = Table('corsi_seguiti',metadata,
                     Column('utente',None,ForeignKey('utenti.id_utente'),nullable=False),
-                    Column('corso_id',None,ForeignKey('corsi.id_corso')),
+                    Column('corso_id',None,ForeignKey('corsi.id_corso'),nullable=False),
                     )
 
 
@@ -76,13 +76,6 @@ lezioni = Table('lezioni',metadata,
 metadata.create_all(engine)
 
 ###########
-
-
-
-@app.route("/helloworld")
-def hello_world():
-    return "<p>Hello, World!</p>"
-
 
 # NO LOGIN PAGES
 
@@ -112,3 +105,18 @@ def Login():
 @app.route("/registrati")
 def Register():
     return render_template("register.html")
+
+
+@app.route("/registratiFunzione", methods=['GET', 'POST'])
+def RegisterFunction():
+    con=engine.connect() #connessione aperta
+    con.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE") #livello di isolamento SERIALIZABLE
+    con.execute("START TRANSACTION") #inizio transazione
+    #controlliamo se esiste un utente registrato con la stessa email facendo una query al db
+    s = select(utenti.c.email).where(utenti.c.email==:email)
+    result_checkEmail = con.execute (s, email=request.form['email']).fetchone()
+    #verifichiamo se la query ha dato almeno un risultato
+    #in caso positivo diamo un feedback all'utente e lo facciamo tornare alla pagina di registrazione
+    if result_checkEmail:
+        flash("Email già usata da un altro utente");
+        render_template("register.html")
