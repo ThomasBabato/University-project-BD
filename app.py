@@ -1,7 +1,8 @@
-from flask import Flask, render_template
-from sqlalchemy import create_engine,MetaData,inspect,ForeignKeyConstraint,PrimaryKeyConstraint
+from flask import Flask, render_template, flash, request
+from sqlalchemy import create_engine, MetaData, inspect, ForeignKeyConstraint, PrimaryKeyConstraint, select
 from sqlalchemy import inspect,Table, Column, Integer, String, MetaData, ForeignKey,Float,DateTime,Date,Boolean
 from  sqlalchemy_utils.functions import database
+from sqlalchemy_utils.types import email
 
 app = Flask(__name__)
 
@@ -35,12 +36,14 @@ metadata = MetaData()
 #sezione dedicata alla creaazione delle tabelle in mysql tramite sql alchemy core:
 #TODO: aggiungere la colonna corsi.
 utenti = Table('utenti',metadata,
-               Column('id_utente',Integer,primary_key=True,autoincrement=True),
+               Column('id_utente',Integer,autoincrement=True),
                Column('nome',String(25)),
                Column('cognome',String(25)),
                Column('email',String(30)),
                Column('telefono',String(15)),
+               Column('password',String(16),nullable=False),
                Column('Tampone',Boolean),
+               PrimaryKeyConstraint('email','password','utenti_pk')
                #Column('ruolo',enumerate((0,'gestore'),(1,'iStruttori'),('2','utenti')))
                )
 #TODO: aggiungere colonne istruttore id e istruttre
