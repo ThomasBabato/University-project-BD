@@ -118,6 +118,7 @@ def RegisterFunction():
     #controlliamo se esiste un utente registrato con la stessa email facendo una query al db
     s = select(utenti.c.email).where(utenti.c.email==email)
     result_checkEmail = con.execute (s, email=request.form['email']).fetchone()
+    flash(request.form['email'])
     #verifichiamo se la query ha dato almeno un risultato
     #in caso positivo diamo un feedback all'utente e lo facciamo tornare alla pagina di registrazione
     if result_checkEmail:
