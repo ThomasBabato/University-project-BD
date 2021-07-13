@@ -43,7 +43,7 @@ utenti = Table('utenti',metadata,
                Column('telefono',String(15)),
                Column('password',String(16),nullable=False),
                Column('Tampone',Boolean),
-               PrimaryKeyConstraint('email','password','utenti_pk')
+               PrimaryKeyConstraint('id_utente',name='utenti_pk')
                #Column('ruolo',enumerate((0,'gestore'),(1,'iStruttori'),('2','utenti')))
                )
 #TODO: aggiungere colonne istruttore id e istruttre
@@ -116,10 +116,16 @@ def RegisterFunction():
     con.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE") #livello di isolamento SERIALIZABLE
     con.execute("START TRANSACTION") #inizio transazione
     #controlliamo se esiste un utente registrato con la stessa email facendo una query al db
-    s = select(utenti.c.email).where(utenti.c.email==:email)
+    s = select(utenti.c.email).where(utenti.c.email==email)
     result_checkEmail = con.execute (s, email=request.form['email']).fetchone()
     #verifichiamo se la query ha dato almeno un risultato
     #in caso positivo diamo un feedback all'utente e lo facciamo tornare alla pagina di registrazione
     if result_checkEmail:
-        flash("Email già usata da un altro utente");
+        flash("Email già usata da un altro utente")
         render_template("register.html")
+    #creiamo la query per inserire il nuovo utente
+    s = utenti.insert().values(nome=nome,cognome=cognome,email=email,password=password) #TODO: Aggiungere ruolo!
+    result_insertUtente = con.execute(s, nome=request.form['nome'], cognome=request.form['cognome'], email=request.form['email'], password=request.form['password'])
+    con.close() #connessione chiusa
+    flash("Registrazione eseguito correttamente!")
+    return "Registrato!"
