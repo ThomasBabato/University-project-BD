@@ -72,7 +72,6 @@ lezioni = Table('lezioni',metadata,
                 Column('ora',DateTime)
                 )
 
-corso_
 
 metadata.create_all(engine)
 
