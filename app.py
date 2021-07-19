@@ -74,3 +74,7 @@ def RegisterFunction():
 
     flash("Registrazione eseguito correttamente!")
     return "Registrato!"
+
+@app.route("/loginFunzione", methods=['GET','POST'])
+def LoginFunction():
+    return "Funzione per il login, ancora da scrivere"
