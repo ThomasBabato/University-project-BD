@@ -145,7 +145,11 @@ def areaRiservata():
 #############################
 
 
-@app.route('/areaRiservata_home')
+@app.route('/areaRiservata_leMiePrenotazioni')
 #   @login_required
-def areaRiservata_home():
-    return render_template("areaRiservata_home.html")
+def areaRiservata_leMiePrenotazioni():
+    con = engine.connect() #apro una connessione
+    # query = inserire query per vedere le prenotazioni dei diversi clienti
+    # result = con.execute( ... )   <- esecuzione della query e salvataggio della risposta in result
+    con.close() #chiusura connessione
+    return render_template("areaRiservata_leMiePrenotazioni.html", result)
