@@ -3,7 +3,7 @@ from sqlalchemy import inspect,Table, Column, Integer, String, MetaData, Foreign
 from  sqlalchemy_utils.functions import database
 
 
-engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost", echo=True)
+engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost", echo=False)
 
 if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//University-project-BD/gym"):
     con = engine.connect()

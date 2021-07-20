@@ -7,6 +7,9 @@ from sqlalchemy_utils.types import email
 from db import *
 from flask_login import LoginManager, login_required, login_user, UserMixin, login_manager, logout_user, current_user
 from  utils_db import *
+from flask_login import user_loaded_from_request
+from flask import Flask
+
 app = Flask(__name__)
 app.config['SECRET_KEY']='THIS IS SECRET KEY1121312'
 
@@ -26,21 +29,29 @@ app.config['SECRET_KEY']='THIS IS SECRET KEY1121312'
 
 '''
 sezione login
+'''
+login_manager = LoginManager()
+login_manager.init_app(app)
 
-manager_login = LoginManager().__init__(app)
+@login_manager.user_loader
+def load_user(user):
+    return User.get_userwithid(user)
+
 
 class User(UserMixin):
-    def __init__(self, id, nome,cognome,email,passw,ruolo):
-        self.id = id,
-        self.nome=nome,
-        self.cognome=cognome,
-        self.email=email,
-        self.passw=passw
-        self.ruolo = ruolo
+    def __init__(self,idx, nomes,cognomes,emails,passwo):
+        id = idx,
+        nome=nomes,
+        cognome=cognomes,
+        email=emails,
+        passw=passwo
 
-    def get_id(self):
-        return self.id
-'''
+    def get_userwithid(self):
+        if self is not None:
+            self.exits = True
+            return self
+        else:
+            return None
 
 
 
@@ -74,12 +85,13 @@ def Register():
 
 @app.route("/registratiFunzione", methods=['GET', 'POST'])
 def RegisterFunction():
+    global engine
     con = engine.connect()  # connessione aperta
     # ricerco prima la mail usando una select, poi successivamente provo a inserire i dati nel databases;
     a = select([utenti]).where(tuple_(utenti.c.email).in_([(request.form['email'])]))
 
     r = con.execute(a).first()
-    if r != None:
+    if r == None:
         s = utenti.insert().values(nome=request.form['nome'], cognome=request.form['cognome'],
                                    email=request.form['email'], telefono=request.form['telefono'],
                                    password=request.form['password'])
@@ -87,7 +99,6 @@ def RegisterFunction():
             con.execute(s)
             #db-w = text("create user :codice@'localhost' identified by ")
             con.close()
-            delete_all()
             return "Registrato!"
         except:
             con.execute("ROLLBACK")
@@ -101,14 +112,18 @@ def RegisterFunction():
             "       Non tutti i campi sono stati compilati." \
             ""
 
+
+
 @app.route('/loginfunzione', methods=['GET', 'POST'])
 def LoginFunction():
     global engine
     con = engine.connect()
-    utente = select([utenti]).where(tuple_(utenti.c.email).in_([request.form['email']]))
-    r_utente = con.execute(utente).first()
-    if r_utente == None:
-        return "Controlla le credenziali, email o password sbagliate."
-    #user = User(utente['password'], utente['password'])
-    return "login"
+    ru = select([utenti]).where(tuple_(utenti.c.email,utenti.c.password).in_([(request.form['email'],request.form['password'])]))
+    u= con.execute(ru).fetchone()
+    utente = User(u[0],[1],u[2],u[3],u[4])
+
+    if load_user(utente):
+       return "loggato"
+    else:
+        return "non loggato"
 
