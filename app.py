@@ -4,7 +4,12 @@ from sqlalchemy import inspect,Table, Column, Integer, String, MetaData, Foreign
 from  sqlalchemy_utils.functions import database
 from sqlalchemy_utils.types import email
 from db import *
+<<<<<<< Updated upstream
 
+=======
+from flask_login import LoginManager, login_required, login_user, UserMixin, login_manager, logout_user, current_user
+from utils_db import *
+>>>>>>> Stashed changes
 
 app = Flask(__name__)
 app.config['SECRET_KEY']='THIS IS SECRET KEY1121312'
@@ -22,6 +27,30 @@ app.config['SECRET_KEY']='THIS IS SECRET KEY1121312'
 
 # NO LOGIN PAGES
 
+<<<<<<< Updated upstream
+=======
+
+'''
+sezione login
+
+'''
+manager_login = LoginManager().__init__(app)
+
+class User(UserMixin):
+    def __init__(self, id, nome,cognome,email,passw,ruolo):
+        self.id = id,
+        self.nome=nome,
+        self.cognome=cognome,
+        self.email=email,
+        self.passw=passw
+        self.ruolo = ruolo
+
+    def get_id(self):
+        return self.id
+
+
+
+>>>>>>> Stashed changes
 @app.route("/")
 def nologin_Home():
     return render_template("nologin_homepage.html")
@@ -50,6 +79,7 @@ def Register():
     return render_template("register.html")
 
 
+@app.route("/registratiFunzione", methods=['GET', 'POST'])
 @app.route("/registratiFunzione", methods=['GET', 'POST'])
 def RegisterFunction():
     con = engine.connect()  # connessione aperta
@@ -83,5 +113,9 @@ def LoginFunction():
     r_utente = con.execute(utente).first()
     if r_utente == None:
         return "Controlla le credenziali, email o password sbagliate."
+<<<<<<< Updated upstream
     r_utente=mena
     return "loggatto."
+=======
+    user = User(utente['mail'], utente['password'])
+>>>>>>> Stashed changes
