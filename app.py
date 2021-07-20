@@ -1,5 +1,5 @@
 from flask import Flask, render_template, flash, request
-from sqlalchemy import create_engine, MetaData, inspect, ForeignKeyConstraint, PrimaryKeyConstraint, select
+from sqlalchemy import create_engine, MetaData, inspect, ForeignKeyConstraint, PrimaryKeyConstraint, select, tuple_
 from sqlalchemy import inspect,Table, Column, Integer, String, MetaData, ForeignKey,Float,DateTime,Date,Boolean
 from  sqlalchemy_utils.functions import database
 from sqlalchemy_utils.types import email
@@ -52,29 +52,36 @@ def Register():
 
 @app.route("/registratiFunzione", methods=['GET', 'POST'])
 def RegisterFunction():
-    con=engine.connect() #connessione aperta
-    #con.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE") #livello di isolamento SERIALIZABLE
-    #con.execute("START TRANSACTION") #inizio transazione
-    #controlliamo se esiste un utente registrato con la stessa email facendo una query al db
-   # s= utenti.query.filter_by(utenti.c.email=email=request.form['email'])
-    #result_checkEmail = con.execute ("Select * from utenti where utenti.id_utente=12")
-    #verifichiamo se la query ha dato almeno un risultato
-    #in caso positivo diamo un feedback all'utente e lo facciamo tornare alla pagina di registrazione
-     #   flash("Email già usata da un altro utente")
-     #   render_template("register.html")
-    #creiamo la query per inserire il nuovo utente
-
     con = engine.connect()  # connessione aperta
-    s = utenti.insert().values(nome=request.form['nome'], cognome=request.form['cognome'],
-                               email=request.form['email'], telefono=request.form['telefono'],
-                               password=request.form['password'])
-    con.execute(s)
-    #con.execute("delete from utenti")
-    con.close()
+    # ricerco prima la mail usando una select, poi successivamente provo a inserire i dati nel databases;
 
-    flash("Registrazione eseguito correttamente!")
-    return "Registrato!"
+    a = select([utenti]).where(tuple_(utenti.c.email)
+                               .in_([(request.form['email'])]))
+    r = con.execute(a).first()
+    if r == None:
+        s = utenti.insert().values(nome=request.form['nome'], cognome=request.form['cognome'],
+                                   email=request.form['email'], telefono=request.form['telefono'],
+                                   password=request.form['password'])
+        try:
+            con.execute(s)
+            con.close()
+            return "Registrato!"
+        except:
+            con.execute("ROLLBACK")
+            con.close()
 
-@app.route("/loginFunzione", methods=['GET','POST'])
+    return "Qualcosa è andato storto: " \
+           "Cause:" \
+           "       Mail già registrata" \
+           "       Non tutti i campi sono stati compilati." \
+           ""
+
+@app.route('/loginfunzione', methods=['GET', 'POST'])
 def LoginFunction():
-    return "Funzione per il login, ancora da scrivere"
+    con = engine.connect()
+    utente = select([utenti]).where(tuple_(utenti.c.email).in_([request.form['email']]))
+    r_utente = con.execute(utente).first()
+    if r_utente == None:
+        return "Controlla le credenziali, email o password sbagliate."
+    r_utente=mena
+    return "loggatto."
