@@ -9,7 +9,7 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
     con = engine.connect()
     con.execute("commit")
     con.execute("create database if not exists gym ")
-    con.execute("set global activate_all_roles_on_login = on")  # attivazione di tutti i ruoli  (da decommentare dopo!)
+    #con.execute("set global activate_all_roles_on_login = on")  # attivazione di tutti i ruoli  (da decommentare dopo!)
     con.close()
 
 engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost/gym")
@@ -57,4 +57,3 @@ lezioni = Table('lezioni',metadata,
 
 
 metadata.create_all(engine)
-

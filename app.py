@@ -9,6 +9,9 @@ from flask_login import LoginManager, login_required, login_user, UserMixin, log
 from  utils_db import *
 from flask_login import user_loaded_from_request
 from flask import Flask
+from flask import redirect, abort, url_for
+
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY']='THIS IS SECRET KEY1121312'
@@ -99,7 +102,7 @@ def RegisterFunction():
             con.execute(s)
             #db-w = text("create user :codice@'localhost' identified by ")
             con.close()
-            return "Registrato!"
+            return render_template("loginPage.html")
         except:
             con.execute("ROLLBACK")
             con.close()
@@ -123,7 +126,26 @@ def LoginFunction():
     utente = User(u[0],[1],u[2],u[3],u[4])
 
     if load_user(utente):
-       return "loggato"
+       return redirect(url_for("areaRiservata"))
     else:
         return "non loggato"
 
+
+# Questa funzione serve per ridirezionare l'utente appena loggato alla sua pagina
+# in una fase successiva del progetto ci permetterà di mandare i due tipi di utenti diversi alle pagine
+#destinate per i loro ruoli
+@app.route('/areaRiservata', methods=["GET","POST"])
+#@login_required #richiede login
+def areaRiservata():
+    return redirect(url_for('areaRiservata_home'))
+
+
+#############################
+# PAGINE PER UTENTI LOGGATI #
+#############################
+
+
+@app.route('/areaRiservata_home')
+#   @login_required
+def areaRiservata_home():
+    return render_template("areaRiservata_home.html")
