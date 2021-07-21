@@ -5,9 +5,9 @@ from sqlalchemy import inspect,Table, Column, Integer, String, MetaData, Foreign
 from  sqlalchemy_utils.functions import database
 
 class Ruoli(enum.Enum):
-    gestore=1
+    Gestore=1
     Istruttore=2
-    cliente=3
+    Cliente=3
     Anonimo=4
 
 
