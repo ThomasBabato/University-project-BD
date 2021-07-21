@@ -19,6 +19,7 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
     con = engine.connect()
     con.execute("commit")
     con.execute("create database if not exists gym ")
+
     query = text("CREATE ROLE IF NOT EXISTS :x,:y,:z,:c")
     con.execute(query, {"x" : "Anonimo","y":"Gestore","z":"Istruttore","c":"Cliente"})
 
@@ -43,7 +44,6 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
 
 
     con.execute("set global activate_all_roles_on_login = on")  # attivazione di tutti i ruoli  (da decommentare dopo!)
-    con.close()
 
 engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost/gym")
 metadata = MetaData()
@@ -101,10 +101,9 @@ prenotazioni= Table('prenotazioni',metadata,
 
 metadata.create_all(engine)
 
+
 con=engine.connect()
 
 query = text("Insert into utenti values (:a, :b,:c, :d, :e,:f,:g,:h)")
 
 con.execute(query, {"a": "0", "b":"Antonio", "c":"Rossi","d":"antorossi@gmail.com" , "e" : "333321312","f":"mipalestra", "g":False,"h":"1"})
-
-

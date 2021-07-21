@@ -4,16 +4,13 @@
 {% block navbar %}
 <ul class="navbar-nav navbar-light">
     <li class="nav-item">
-        <a class="nav-link" href="{{url_for('nologin_home')}}">Home</a>
+        <a class="nav-link" href="">Prenotazioni</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="{{url_for('le_mie_prenotazioni')}}">Le mie prenotazioni</a>
+        <a class="nav-link" href="">Nuova prenotazione</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="{{url_for('nuova_prenotazione')}}">Nuova prenotazione</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{{url_for('impostazioni')}}">Impostazioni</a>
+        <a class="nav-link" href="">Impostazioni</a>
     </li>
     <!--  QUI SERVIREBBE UN TASTO LOGOUT - DA IMPLEMENTARE IN FASE DI FUSIONE CON IL BACKEND
     <li class="nav-item">
@@ -30,5 +27,35 @@
 <!-- Block body -->
 {% block body %}
 <h1 align="center"> Le mie prenotazioni </h1>
+<br><br>
+
+
+<div class="table-responsive table-responsive-data2">
+    <table class="table table-data2">
+        <thead>
+            <tr>
+                <th>corso</th> <!-- pensavo di farlo come link alla scheda del corso -->
+                <th>giorno</th>
+                <th>ora</th>
+                <th>locale</th>
+                <th>descrizione</th> <!-- relativa alla singola lezione -->
+            </tr>
+            <tbody>
+                <!-- ciclo per mostrare tutte le prenotazioni del cliente -->
+                {% for row in result %}
+                <tr class="tr-shadow">
+                    <td>{{row['corso']}}</td>
+                    <td>{{row['giorno']}}</td>
+                    <td>{{row['ora']}}</td>
+                    <td>{{row['locale']}}</td>
+                    <td>{{row['descrizione']}}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </thead>
+    </table>
+</div>
+
 
 {% endblock %}
