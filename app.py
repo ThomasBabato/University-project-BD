@@ -4,17 +4,22 @@ from sqlalchemy import create_engine, MetaData, inspect, ForeignKeyConstraint, P
 from sqlalchemy import inspect,Table, Column, Integer, String, MetaData, ForeignKey,Float,DateTime,Date,Boolean
 from  sqlalchemy_utils.functions import database
 from sqlalchemy_utils.types import email
-from db import *
+import db
+from utils_db import *
+from db import utenti,locali,lezioni,corsi_seguiti,engine,corsi,prenotazioni
 from flask_login import LoginManager, login_required, login_user, UserMixin, login_manager, logout_user, current_user
 from  utils_db import *
 from flask_login import user_loaded_from_request
 from flask import Flask
 from flask import redirect, abort, url_for
+import re
 
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY']='THIS IS SECRET KEY1121312'
+
+
 
 #generic config for mysqldb
 #
@@ -36,6 +41,11 @@ sezione login
 login_manager = LoginManager()
 login_manager.init_app(app)
 
+con = engine.connect()
+
+#populate(False)
+
+
 @login_manager.user_loader
 def load_user(user):
     return User.get_userwithid(user)
@@ -47,7 +57,9 @@ class User(UserMixin):
         nome=nomes,
         cognome=cognomes,
         email=emails,
-        passw=passwo
+        passw=passwo,
+        tampome= False
+        ruolo = db.Ruoli.Cliente
 
     def get_userwithid(self):
         if self is not None:
@@ -90,54 +102,49 @@ def Register():
 def RegisterFunction():
     global engine
     con = engine.connect()  # connessione aperta
+    con.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE")  # livello di isolamento SERIALIZABLE
+    con.execute("START TRANSACTION")  # inizio transazione
     # ricerco prima la mail usando una select, poi successivamente provo a inserire i dati nel databases;
-    a = select([utenti]).where(tuple_(utenti.c.email).in_([(request.form['email'])]))
-
-    r = con.execute(a).first()
-    if r == None:
-        s = utenti.insert().values(nome=request.form['nome'], cognome=request.form['cognome'],
-                                   email=request.form['email'], telefono=request.form['telefono'],
-                                   password=request.form['password'])
-        try:
+    q = text("select utenti.email from utenti where email = :x")
+    r = con.execute(q, {"x":request.form['email']}).first()
+    if r==None:
+            s = utenti.insert().values(nome=request.form['nome'], cognome=request.form['cognome'],
+                                       email=request.form['email'], telefono=request.form['telefono'],
+                                       password=request.form['password'], tampone=False, ruolo=db.Ruoli.Cliente)
             con.execute(s)
-            #db-w = text("create user :codice@'localhost' identified by ")
-            con.close()
             return render_template("loginPage.html")
-        except:
             con.execute("ROLLBACK")
             con.close()
     else:
-        con.execute("ROLLBACK")
-        con.close()
         return "Qualcosa è andato storto: " \
-               "Cause:" \
-            "       Mail già registrata" \
-            "       Non tutti i campi sono stati compilati." \
-            ""
-
+           "Cause:" \
+           "       Mail già registrata" \
+           "       Non tutti i campi sono stati compilati."
 
 
 @app.route('/loginfunzione', methods=['GET', 'POST'])
 def LoginFunction():
     global engine
     con = engine.connect()
-    ru = select([utenti]).where(tuple_(utenti.c.email,utenti.c.password).in_([(request.form['email'],request.form['password'])]))
-    u= con.execute(ru).fetchone()
-    utente = User(u[0],[1],u[2],u[3],u[4])
-
-    if load_user(utente):
-       return redirect(url_for("areaRiservata"))
+    ru = select([utenti]).where(tuple_(utenti.c.email, utenti.c.password).in_([(request.form['email'], request.form['password'])]))
+    u = con.execute(ru).fetchone()
+    if u == None:
+        con.close()
+        return "utente non  registrato, registarsi prima."
     else:
-        return "non loggato"
-
+        utente = User(u[0], u[1], u[2], u[3], u[4])
+        if load_user(utente):
+            return redirect(url_for("areaRiservata_leMiePrenotazioni"))
+        else:
+            return "campi sbagliati"
 
 # Questa funzione serve per ridirezionare l'utente appena loggato alla sua pagina
 # in una fase successiva del progetto ci permetterà di mandare i due tipi di utenti diversi alle pagine
 #destinate per i loro ruoli
 @app.route('/areaRiservata', methods=["GET","POST"])
-#@login_required #richiede login
+@login_required #richiede login
 def areaRiservata():
-    return redirect(url_for('areaRiservata_home'))
+    return redirect(url_for('areaRiservata_leMiePrenotazioni'))
 
 
 #############################
@@ -152,4 +159,4 @@ def areaRiservata_leMiePrenotazioni():
     # query = inserire query per vedere le prenotazioni dei diversi clienti
     # result = con.execute( ... )   <- esecuzione della query e salvataggio della risposta in result
     con.close() #chiusura connessione
-    return render_template("areaRiservata_leMiePrenotazioni.html", result)
+    return render_template("areaRiservata_leMiePrenotazioni.html")
