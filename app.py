@@ -160,3 +160,12 @@ def areaRiservata_leMiePrenotazioni():
     # result = con.execute( ... )   <- esecuzione della query e salvataggio della risposta in result
     con.close() #chiusura connessione
     return render_template("areaRiservata_leMiePrenotazioni.html")
+
+
+# FUNZIONE PER EFFETTUARE UNA PRENOTAZIONE
+@app.route('/effettuaPrenotazione', methods=['GET', 'POST'])
+# @login_required
+def effettuaPrenotazione:
+    # effettuare una prenotazione della lezione, dall'html mi ritorna l'id della lezione da prenotare
+    flash("prenotazione effettuata con successo")
+    return 
