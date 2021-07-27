@@ -30,5 +30,47 @@
 <!-- Block body -->
 {% block body %}
 <h1 align="center"> Effettua una nuova prenotazione </h1>
+<br><br>
+
+<div class="table-responsive table-responsive-data2">
+    <table class="table table-data2">
+        <thead>
+            <tr>
+                <th>idLezione</th>
+                <th>corso</th> <!-- pensavo di farlo come link alla scheda del corso -->
+                <th>giorno</th>
+                <th>ora</th>
+                <th>locale</th>
+                <th>descrizione</th> <!-- relativa alla singola lezione -->
+                <th>prenotati!</th>
+            </tr>
+            <tbody>
+                <!-- ciclo per mostrare tutte le prenotazioni del cliente -->
+                {% for row in result %}
+                <tr class="tr-shadow">
+                    <td>{{row['idLezione']}}</td>
+                    <td>{{row['corso']}}</td>
+                    <td>{{row['giorno']}}</td>
+                    <td>{{row['ora']}}</td>
+                    <td>{{row['locale']}}</td>
+                    <td>{{row['descrizione']}}</td>
+                    <td>
+                        <form class="form-inline" action="{{url_for('effettuaPrenotazione')}}" method="post">
+                            <!-- Passaggio del codice del volo non visibile -->
+                            <input type="hidden" name="lezione" value="{{row['idLezione']}}" />
+                            <!-- Input per vedere i dettagli riguardanti un volo -->
+                            <input class="btn btn-outline-primary btn-lg" type="submit" name="Prenotati" value="Prenotati" />
+                        </form>
+                     </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </thead>
+    </table>
+</div>
+
+
+
 
 {% endblock %}
