@@ -1,3 +1,4 @@
+import flask_login
 from flask import Flask, render_template, flash, request
 from sqlalchemy import create_engine, MetaData, inspect, ForeignKeyConstraint, PrimaryKeyConstraint, select, tuple_, \
     text
@@ -53,17 +54,22 @@ def load_user(user):
 
 class User(UserMixin):
     def __init__(self,idx, nomes,cognomes,emails,passwo):
-        id = idx,
-        nome=nomes,
-        cognome=cognomes,
-        email=emails,
-        passw=passwo,
-        tampome= False
-        ruolo = db.Ruoli.Cliente
+        self.id = idx,
+        self.nome=nomes,
+        self.cognome=cognomes,
+        self.email=emails,
+        self.passw=passwo,
+        self.tampome= False
+        self.ruolo = db.Ruoli.Cliente
+
+    def get_id(self):
+        return self.id
+
+
 
     def get_userwithid(self):
         if self is not None:
-            self.exits = True
+            #self.exits = True
             return self
         else:
             return None
@@ -134,6 +140,7 @@ def LoginFunction():
     else:
         utente = User(u[0], u[1], u[2], u[3], u[4])
         if load_user(utente):
+            flask_login.login_user(utente)
             return redirect(url_for("areaRiservata_leMiePrenotazioni"))
         else:
             return "campi sbagliati"
