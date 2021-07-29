@@ -11,8 +11,6 @@ class Ruoli(enum.Enum):
     Anonimo=4
 
 
-
-
 engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost", echo=False)
 
 if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//University-project-BD/gym"):
@@ -35,7 +33,6 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
                Column('ruolo',Enum(Ruoli))
                )
 
-    #TODO: aggiungere colonne istruttore id e istruttre
     corsi = Table('corsi',metadata,
               Column('id_corso', Integer,autoincrement=True),
               Column('nome', String(25)),
@@ -50,19 +47,20 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
                     )
 
 
-    #TODO :
     locali = Table('locali',metadata,
                    Column('id_locale', Integer, primary_key=True, autoincrement=True),
                    Column('nome', String(25)),
                    Column('mq', Float),
                    Column('capienza', Integer)
                   )
-    #TODO: aggiungere i collegamenti tra corso e id
+
     lezioni = Table('lezioni',metadata,
                     Column('id_lezione', Integer, primary_key=True, autoincrement=True),
+                    Column('codice_corso', None, ForeignKey(corsi.id_corso),nullable=False),
                     Column('descrizione', String(120)),
                     Column('giorno',Date),
-                    Column('ora',DateTime)
+                    Column('ora',DateTime),
+                    Column('persone_consentite',Integer)
                     )
 
     prenotazioni= Table('prenotazioni',metadata,

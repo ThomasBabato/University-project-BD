@@ -65,6 +65,10 @@ class User(UserMixin):
     def get_id(self):
         return self.id
 
+    def get_ruolo(self):
+        return self.ruolo
+
+
 
 
     def get_userwithid(self):
@@ -141,15 +145,19 @@ def LoginFunction():
         utente = User(u[0], u[1], u[2], u[3], u[4])
         if load_user(utente):
             flask_login.login_user(utente)
-            return redirect(url_for("areaRiservata_leMiePrenotazioni"))
+            if utente.is_authenticated == True:
+                return redirect(url_for("areaRiservata_leMiePrenotazioni"))
+            else:
+                return "utente non autenticato"
         else:
             return "campi sbagliati"
 
 # Questa funzione serve per ridirezionare l'utente appena loggato alla sua pagina
 # in una fase successiva del progetto ci permetterà di mandare i due tipi di utenti diversi alle pagine
 #destinate per i loro ruoli
+#TODO: aggiungere if per ruolo e indirizzare in modo corretto
 @app.route('/areaRiservata', methods=["GET","POST"])
-@login_required #richiede login
+#@login_required #richiede login
 def areaRiservata():
     return redirect(url_for('areaRiservata_leMiePrenotazioni'))
 
@@ -160,19 +168,24 @@ def areaRiservata():
 
 
 @app.route('/areaRiservata_leMiePrenotazioni')
-#   @login_required
+#@login_required
 def areaRiservata_leMiePrenotazioni():
+    global engine, current_user
     con = engine.connect() #apro una connessione
     # query = inserire query per vedere le prenotazioni dei diversi clienti
     # result = con.execute( ... )   <- esecuzione della query e salvataggio della risposta in result
-    con.close() #chiusura connessione
-    return render_template("areaRiservata_leMiePrenotazioni.html")
+    #if current_user.is_authenticated == True:
+    q = select([prenotazioni]).where(prenotazioni.c.utente).in_('31')
+    resul = con.execute(q)
+    return render_template("areaRiservata_leMiePrenotazioni.html",resul)
+    #else:
+    #    return "utente non autenticato"
 
 
 # FUNZIONE PER EFFETTUARE UNA PRENOTAZIONE
 @app.route('/effettuaPrenotazione', methods=['GET', 'POST'])
 # @login_required
-def effettuaPrenotazione:
+def effettuaPrenotazione():
     # effettuare una prenotazione della lezione, dall'html mi ritorna l'id della lezione da prenotare
     flash("prenotazione effettuata con successo")
-    return 
+    return
