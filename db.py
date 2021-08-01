@@ -56,7 +56,7 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
 
     lezioni = Table('lezioni',metadata,
                     Column('id_lezione', Integer, primary_key=True, autoincrement=True),
-                    Column('codice_corso', None, ForeignKey(corsi.id_corso),nullable=False),
+                    Column('codice_corso', None, ForeignKey('corsi.id_corso'),nullable=False),
                     Column('descrizione', String(120)),
                     Column('giorno',Date),
                     Column('ora',DateTime),

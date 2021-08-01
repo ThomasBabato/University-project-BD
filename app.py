@@ -166,7 +166,6 @@ def areaRiservata():
 # PAGINE PER UTENTI LOGGATI #
 #############################
 
-
 @app.route('/areaRiservata_leMiePrenotazioni')
 #@login_required
 def areaRiservata_leMiePrenotazioni():
