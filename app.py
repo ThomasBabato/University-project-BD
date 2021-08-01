@@ -188,3 +188,50 @@ def effettuaPrenotazione():
     # effettuare una prenotazione della lezione, dall'html mi ritorna l'id della lezione da prenotare
     flash("prenotazione effettuata con successo")
     return
+
+
+# CARICA LA PAGINA DELLE IMPOSTAZIONI
+@app.route('/areaRiservata_impostazioni')
+# @login.required
+def areaRiservata_impostazioni():
+    # recuperare l'ultimo tampone effettuato dall'utente con data e risultato
+    # per passare il risultato si dovrebbe salvare il risultato della query in una variabile e poi passarla dentro a render_template insieme alla pagina html
+    return render_template("areaRiservata_impostazioni.html")
+
+
+# FUNZIONE PER INSERIRE IL RISULTATO DI UN TAMPONE
+@app.route('/inserisciRisultatoTampone', methods=['GET', 'POST'])
+# @login.required
+def inserisciRisultatoTampone():
+    # recureare le info dell'inserimento del tampone ed inviarla al db
+    flash("Inserimento avvenuto correttamente") #Messaggio a schermo che avvisa l'utente del corretto inserimento del risultato del tampone
+    return render_template("areaRiservata_importazioni.html")
+
+
+##############################
+# PAGINE PER GESTORE LOGGATO #
+##############################
+
+# per andare nella pagina di gestione Lezione e Corsi del Gestore
+@app.route("/areaRiservataGestore_gestioneLezioneCorsi.html")
+def areaRiservataGestore_gestioneLezioneCorsi():
+    return render_template("areaRiservataGestore_gestioneLezioneCorsi")
+
+# funzione eseguita quando si va ad eliminre una lezione sul pannello di gestione dei corsi del gestore
+@app.route("/eliminaLezione", methods=['GET', 'POST'])
+#@login.required
+def eliminaLezione():
+    # recuperare i dati passati dalla pagina web (basta l'id della lezione)
+    # e poi eliminare la lezione dal db
+    flash("Lezione eliminata con successo")
+    return render_template("areaRiservataGestore_gestioneLezioneCorsi.html")
+
+
+# funzione eseguita quando si va ad eliminre un corso sul pannello di gestione dei corsi del gestore
+@app.route("/eliminaCorso", methods=['GET', 'POST'])
+#@login.required
+def eliminaCorso():
+    # recuperare i dati passati dalla pagina web (basta l'id del corso)
+    # e poi eliminare la lezione dal db
+    flash("Corso eliminato con successo")
+    return render_template("areaRiservataGestore_gestioneLezioneCorsi.html")
