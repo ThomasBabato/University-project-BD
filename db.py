@@ -96,7 +96,7 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
     query = text("GRANT INSERT,DELETE,UPDATE ON gym.corsi_seguiti to :x")
     con.execute(query, {"x": "Cliente"})
 
-    con.execute("set global activate_all_roles_on_login = on")  # attivazione di tutti i ruoli  (da decommentare dopo!)
+    #con.execute("set global activate_all_roles_on_login = on")  # attivazione di tutti i ruoli  (da decommentare dopo!)
 
 
     con=engine.connect()

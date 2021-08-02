@@ -29,6 +29,12 @@
 
 <!-- Block body -->
 {% block body %}
+{% if current_user.is_authenticated %}
+  Hi {{ current_user.name }}!
+{% endif %}
+<br> <br>
+
+
 <h1 align="center"> Effettua una nuova prenotazione </h1>
 <br><br>
 

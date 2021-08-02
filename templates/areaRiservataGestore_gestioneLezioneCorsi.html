@@ -20,6 +20,12 @@
 
 <!-- Block body -->
 {% block body %}
+{% if current_user.is_authenticated %}
+  Hi {{ current_user.name }}!
+<br> <br>
+
+
+
 # ELIMINARE LEZIONI
 <h1 align="center"> Elimina Lezioni </h1>
 <br><br>
@@ -99,5 +105,5 @@
     </table>
 </div>
 
-
+{% endif %}
 {% endblock %}
