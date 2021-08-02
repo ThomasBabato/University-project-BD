@@ -26,41 +26,41 @@
 
 <!-- Block body -->
 {% block body %}
-{% if current_user.is_authenticated %}
-  Hi {{ current_user.name }}!
-<br> <br>
+        <br> <br>
 
 
-<h1 align="center"> Le mie prenotazioni </h1>
-<br><br>
+        <h1 align="center"> Le mie prenotazioni </h1>
+        <br><br>
 
 
-<div class="table-responsive table-responsive-data2">
-    <table class="table table-data2">
-        <thead>
-            <tr>
-                <th>corso</th> <!-- pensavo di farlo come link alla scheda del corso -->
-                <th>giorno</th>
-                <th>ora</th>
-                <th>locale</th>
-                <th>descrizione</th> <!-- relativa alla singola lezione -->
-            </tr>
-            <tbody>
-                <!-- ciclo per mostrare tutte le prenotazioni del cliente -->
-                {% for row in result %}
-                <tr class="tr-shadow">
-                    <td>{{row['corso']}}</td>
-                    <td>{{row['giorno']}}</td>
-                    <td>{{row['ora']}}</td>
-                    <td>{{row['locale']}}</td>
-                    <td>{{row['descrizione']}}</td>
-                </tr>
-                {% endfor %}
+        <div class="table-responsive table-responsive-data2">
+            <table class="table table-data2">
+                <thead>
+                    <tr>
+                        <th>corso</th> <!-- pensavo di farlo come link alla scheda del corso -->
+                        <th>giorno</th>
+                        <th>ora</th>
+                        <th>locale</th>
+                        <th>descrizione</th> <!-- relativa alla singola lezione -->
+                    </tr>
+                    <tbody>
+{% if  current_user == True %}
+                        <!-- ciclo per mostrare tutte le prenotazioni del cliente -->
+                {%if result!= Null %}
+                        {% for row in result %}
+                        <tr class="tr-shadow">
+                            <td>{{row[0]}}</td>
+                            <td>{{row[1]}}</td>
+                            <td>{{row[2]}}</td>
 
-            </tbody>
-        </thead>
-    </table>
-</div>
 
-{% endif %}
+                        </tr>
+                        {% endfor %}
+                {%endif%}
+
+                    </tbody>
+                </thead>
+            </table>
+        </div>
+    {% endif %}
 {% endblock %}

@@ -145,20 +145,21 @@ def LoginFunction():
         utente = User(u[0], u[1], u[2], u[3], u[4])
         if load_user(utente):
             flask_login.login_user(utente)
-            if utente.is_authenticated == True:
-                return redirect(url_for("areaRiservata_leMiePrenotazioni"))
-            else:
-                return "utente non autenticato"
+            q = ("select * from prenotazioni")
+            resul = con.execute(q)
+            return render_template("areaRiservata_leMiePrenotazioni.html", current_user=current_user.is_authenticated,result=resul)
         else:
-            return "campi sbagliati"
+            return "utente non autenticato"
+
+
 
 # Questa funzione serve per ridirezionare l'utente appena loggato alla sua pagina
 # in una fase successiva del progetto ci permetterà di mandare i due tipi di utenti diversi alle pagine
 #destinate per i loro ruoli
 #TODO: aggiungere if per ruolo e indirizzare in modo corretto
-@app.route('/areaRiservata', methods=["GET","POST"])
+#@app.route('/areaRiservata', methods=["GET","POST"])
 #@login_required #richiede login
-def areaRiservata():
+#def areaRiservata():
     return redirect(url_for('areaRiservata_leMiePrenotazioni'))
 
 
@@ -166,19 +167,28 @@ def areaRiservata():
 # PAGINE PER UTENTI LOGGATI #
 #############################
 
+
+
+
 @app.route('/areaRiservata_leMiePrenotazioni')
-#@login_required
+@login_required
 def areaRiservata_leMiePrenotazioni():
     global engine, current_user
     con = engine.connect() #apro una connessione
     # query = inserire query per vedere le prenotazioni dei diversi clienti
     # result = con.execute( ... )   <- esecuzione della query e salvataggio della risposta in result
     #if current_user.is_authenticated == True:
-    q = select([prenotazioni]).where(prenotazioni.c.utente).in_('31')
+    q = select([prenotazioni]).where(prenotazioni.c.utente).in_('1')
     resul = con.execute(q)
-    return render_template("areaRiservata_leMiePrenotazioni.html",resul)
-    #else:
-    #    return "utente non autenticato"
+    return render_template('areaRiservata_leMiePrenotazioni',current_user=current_user.is_authenticated)
+
+
+
+
+
+
+
+
 
 
 # FUNZIONE PER EFFETTUARE UNA PRENOTAZIONE
