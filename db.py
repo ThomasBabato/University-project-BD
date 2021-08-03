@@ -10,6 +10,9 @@ class Ruoli(enum.Enum):
     Cliente=3
     Anonimo=4
 
+    def get_Istruttre(self):
+        return Ruoli.Istruttore
+
 
 engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost", echo=False)
 
@@ -38,7 +41,8 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
               Column('nome', String(25)),
               PrimaryKeyConstraint('id_corso','nome',name='corsi_pk'),
               Column('descrizione', String(150)),
-              Column('istruttore',None,ForeignKey('utenti.id_utente'))
+              Column('istruttore',None,ForeignKey('utenti.id_utente')),
+              Column('locale',None,ForeignKey('locali.id_locale'))
               )
 
     corsi_seguiti = Table('corsi_seguiti',metadata,
@@ -51,7 +55,7 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
                    Column('id_locale', Integer, primary_key=True, autoincrement=True),
                    Column('nome', String(25)),
                    Column('mq', Float),
-                   Column('capienza', Integer)
+                   Column('capienza_massima', Integer)
                   )
 
     lezioni = Table('lezioni',metadata,
@@ -95,6 +99,9 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
     con.execute(query, {"x": "Cliente"})
 
     query = text("GRANT INSERT,DELETE,UPDATE ON gym.corsi_seguiti to :x")
+    con.execute(query, {"x": "Cliente"})
+
+    query = text("GRANT INSERT,DELETE,UPDATE ON gym.prenotazioni to :x")
     con.execute(query, {"x": "Cliente"})
 
     con.execute("set global activate_all_roles_on_login = on")  # attivazione di tutti i ruoli  (da decommentare dopo!)

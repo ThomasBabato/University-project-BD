@@ -70,8 +70,6 @@ class User(UserMixin):
         return self.ruolo
 
 
-
-
     def get_userwithid(self):
         if self is not None:
             #self.exits = True
