@@ -54,7 +54,7 @@ def load_user(user):
 
 class User(UserMixin):
     def __init__(self,idx, nomes,cognomes,emails,passwo):
-        self.id = idx,
+        self.id =idx,
         self.nome=nomes,
         self.cognome=cognomes,
         self.email=emails,
@@ -64,6 +64,7 @@ class User(UserMixin):
 
     def get_id(self):
         return self.id
+
 
     def get_ruolo(self):
         return self.ruolo
@@ -122,6 +123,12 @@ def RegisterFunction():
                                        email=request.form['email'], telefono=request.form['telefono'],
                                        password=request.form['password'], tampone=False, ruolo=db.Ruoli.Cliente)
             con.execute(s)
+
+            privilegi_query = text("grant Cliente to :x@'localhost'; ")
+            con.execute(privilegi_query, {"x": request.form['email']})
+            con.execute("flush privileges ")
+            con.execute("commit")
+
             return render_template("loginPage.html")
             con.execute("ROLLBACK")
             con.close()
@@ -142,11 +149,12 @@ def LoginFunction():
         con.close()
         return "utente non  registrato, registarsi prima."
     else:
-        utente = User(u[0], u[1], u[2], u[3], u[4])
+        utente = User(u[0], u[1], u[2], u[3],u[4])
         if load_user(utente):
+            engine.connect("mysql+pymysql://"+str(utente.email)+":"+str(utente.passw)+"@localhost/gym")
             flask_login.login_user(utente)
-            q = ("select * from prenotazioni")
-            resul = con.execute(q)
+            q = ("select * from prenotazioni where prenotazioni.utente = ':x' ")
+            resul = con.execute(q, {"x":utente.get_id()})
             return render_template("areaRiservata_leMiePrenotazioni.html", current_user=current_user.is_authenticated,result=resul)
         else:
             return "utente non autenticato"
