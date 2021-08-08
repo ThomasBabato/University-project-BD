@@ -3,6 +3,8 @@ import enum
 from sqlalchemy import create_engine, MetaData, inspect, ForeignKeyConstraint, PrimaryKeyConstraint, select
 from sqlalchemy import inspect,Table, Column, Integer, String, MetaData, ForeignKey,Float,DateTime,Date,Boolean,Enum,text
 from  sqlalchemy_utils.functions import database
+from sqlalchemy.orm import relationship
+from sqlalchemy.ext.declarative import declarative_base
 
 class Ruoli(enum.Enum):
     Gestore=1
@@ -10,12 +12,13 @@ class Ruoli(enum.Enum):
     Cliente=3
     Anonimo=4
 
-    def get_Istruttre(self):
-        return Ruoli.Istruttore
+def set_istruttore():
+    return 2
 
 
 engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost", echo=False)
-
+con = engine.connect()
+con.execute("create database if not exists gym ")
 if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//University-project-BD/gym"):
     con = engine.connect()
     con.execute("commit")
@@ -25,14 +28,13 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
     metadata = MetaData()
 
     utenti = Table('utenti',metadata,
-               Column('id_utente',Integer,autoincrement=True),
+               Column('id_utente',Integer,primary_key=True,autoincrement=True),
                Column('nome',String(25)),
                Column('cognome',String(25)),
                Column('email',String(30)),
                Column('telefono',String(15)),
                Column('password',String(16),nullable=False),
                Column('tampone',Boolean),
-               PrimaryKeyConstraint('id_utente',name='utenti_pk'),
                Column('ruolo',Enum(Ruoli))
                )
 
@@ -41,13 +43,14 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
               Column('nome', String(25)),
               PrimaryKeyConstraint('id_corso','nome',name='corsi_pk'),
               Column('descrizione', String(150)),
-              Column('istruttore',None,ForeignKey('utenti.id_utente')),
+              Column('istruttore',None,ForeignKey('utenti.id_utente'),nullable=True),
               Column('locale',None,ForeignKey('locali.id_locale'))
               )
 
+    Base = declarative_base()
     corsi_seguiti = Table('corsi_seguiti',metadata,
-                    Column('utente',None,ForeignKey('utenti.id_utente'),nullable=False),
-                    Column('corso_id',None,ForeignKey('corsi.id_corso'),nullable=False),
+                    Column('utente',ForeignKey('utenti.id_utente')),
+                    Column('corso_id',ForeignKey('corsi.id_corso')),
                     )
 
 
@@ -60,10 +63,9 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
 
     lezioni = Table('lezioni',metadata,
                     Column('id_lezione', Integer, primary_key=True, autoincrement=True),
-                    Column('codice_corso', None, ForeignKey('corsi.id_corso'),nullable=False),
+                    Column('codice_corso', ForeignKey('corsi.id_corso'),nullable=False),
                     Column('descrizione', String(120)),
-                    Column('giorno',Date),
-                    Column('ora',DateTime),
+                    Column('Data_e_ora',DateTime), #formato yy/mm/gg hh/mm
                     Column('persone_consentite',Integer)
                     )
 
@@ -78,33 +80,42 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
     metadata.create_all(engine)
 
 
-    query = text("CREATE ROLE IF NOT EXISTS :x,:y,:z,:c")
-    con.execute(query, {"x": "Anonimo", "y": "Gestore", "z": "Istruttore", "c": "Cliente"})
-    con.execute("GRANT INSERT on gym.utenti to Anonimo")
+    con.execute("CREATE ROLE IF NOT EXISTS 'Anonimo'@'localhost'")
+    con.execute("CREATE ROLE IF NOT EXISTS 'Cliente'@'localhost'")
+    con.execute("CREATE ROLE IF NOT EXISTS 'Istruttore'@'localhost'")
+    con.execute("CREATE ROLE IF NOT EXISTS 'Gestore'@'localhost'")
 
-    query = text("GRANT INSERT,DELETE,UPDATE ON gym.* to :x")
-    con.execute(query, {"x": "Gestore"})
+    con.execute("set Default Role all to 'Anonimo'@'localhost','Gestore'@'localhost','Istruttore'@'localhost','Cliente'@'localhost' ")
+
+    con.execute("GRANT INSERT on gym.utenti to 'Anonimo'@'localhost'")
+
+    con.execute("GRANT SELECT,INSERT,DELETE,UPDATE ON gym.* to 'Gestore'@'localhost'")
 
     # Istruttre
-    query = text("GRANT INSERT,DELETE,UPDATE ON gym.corsi to :x")
-    con.execute(query, {"x": "Istruttore"})
+    con.execute("GRANT SELECT,INSERT,DELETE,UPDATE ON gym.corsi to 'Istruttore'@'localhost'")
 
-    query = text("GRANT INSERT,DELETE,UPDATE ON gym.lezioni to :x")
-    con.execute(query, {"x": "Istruttore"})
+    con.execute("GRANT SELECT,INSERT,DELETE,UPDATE ON gym.lezioni to 'Istruttore'@'localhost'")
 
-    query = text("GRANT INSERT,DELETE,UPDATE ON gym.utenti to :x")
-    con.execute(query, {"x": "Cliente"})
+    con.execute("GRANT SELECT,INSERT,DELETE,UPDATE ON gym.utenti to 'Cliente'@'localhost'")
 
-    query = text("GRANT INSERT,DELETE,UPDATE ON gym.corsi to :x")
-    con.execute(query, {"x": "Cliente"})
+    con.execute("GRANT SELECT,INSERT,DELETE,UPDATE ON gym.corsi to 'Cliente'@'localhost'")
 
-    query = text("GRANT INSERT,DELETE,UPDATE ON gym.corsi_seguiti to :x")
-    con.execute(query, {"x": "Cliente"})
 
-    query = text("GRANT INSERT,DELETE,UPDATE ON gym.prenotazioni to :x")
-    con.execute(query, {"x": "Cliente"})
+    con.execute("GRANT SELECT,INSERT,DELETE,UPDATE ON gym.corsi_seguiti to 'Cliente'@'localhost'")
+
+    con.execute("GRANT SELECT,INSERT,DELETE,UPDATE ON gym.prenotazioni to 'Cliente'@'localhost'")
 
     con.execute("set global activate_all_roles_on_login = on")  # attivazione di tutti i ruoli  (da decommentare dopo!)
 
+'''
+trigger = "CREATE TRIGGER email_bi" \
+          "before Insert on gym.utenti for each row " \
+          " begin" \
+          "     if new.email != '_@gmail.com' then " \
+          "         ROLLEBACK;" \
+          "     end if;" \
+          " end;" \
+          "delimiter ;"
 
-    con=engine.connect()
+con.execute(trigger)
+'''

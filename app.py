@@ -5,20 +5,26 @@ from sqlalchemy import create_engine, MetaData, inspect, ForeignKeyConstraint, P
 from sqlalchemy import inspect,Table, Column, Integer, String, MetaData, ForeignKey,Float,DateTime,Date,Boolean
 from  sqlalchemy_utils.functions import database
 from sqlalchemy_utils.types import email
-import db
-from utils_db import *
 from db import utenti,locali,lezioni,corsi_seguiti,engine,corsi,prenotazioni
+import db
+import pymysql
+from pymysql import *
+import query_gym
+from query_gym import change_role
+from utils_db import *
 from flask_login import LoginManager, login_required, login_user, UserMixin, login_manager, logout_user, current_user
 from  utils_db import *
 from flask_login import user_loaded_from_request
 from flask import Flask
 from flask import redirect, abort, url_for
+from sqlalchemy.orm import *
 import re
 
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY']='THIS IS SECRET KEY1121312'
+
 
 
 
@@ -41,10 +47,10 @@ sezione login
 '''
 login_manager = LoginManager()
 login_manager.init_app(app)
+engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost/gym")
 
 con = engine.connect()
 
-#populate(False)
 
 
 @login_manager.user_loader
@@ -60,7 +66,7 @@ class User(UserMixin):
         self.email=emails,
         self.passw=passwo,
         self.tampome= False
-        self.ruolo = db.Ruoli.Cliente
+        self.ruolo = "Cliente"
 
     def get_id(self):
         return self.id
@@ -109,10 +115,13 @@ def Register():
 
 @app.route("/registratiFunzione", methods=['GET', 'POST'])
 def RegisterFunction():
-    global engine
+    engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost/gym")
+
     con = engine.connect()  # connessione aperta
     con.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE")  # livello di isolamento SERIALIZABLE
     con.execute("START TRANSACTION")  # inizio transazione
+
+
     # ricerco prima la mail usando una select, poi successivamente provo a inserire i dati nel databases;
     q = text("select utenti.email from utenti where email = :x")
     r = con.execute(q, {"x":request.form['email']}).first()
@@ -121,15 +130,18 @@ def RegisterFunction():
                                        email=request.form['email'], telefono=request.form['telefono'],
                                        password=request.form['password'], tampone=False, ruolo=db.Ruoli.Cliente)
             con.execute(s)
+            ru = select([utenti]).where(
+                tuple_(utenti.c.email, utenti.c.password).in_([(request.form['email'], request.form['password'])]))
+            u = con.execute(ru).fetchone()
 
-            privilegi_query = text("grant Cliente to :x@'localhost'; ")
-            con.execute(privilegi_query, {"x": request.form['email']})
-            con.execute("flush privileges ")
+            con.execute("create user "+u[3]+"@'localhost' identified by "+"'"+u[4]+"'")
             con.execute("commit")
 
+            #con.execute("grant 'Cliente'@'localhost' to "+"'"+u[3]+"'"+"@'localhost'")
+            con.execute("flush privileges ")
+            con.execute("commit")
             return render_template("loginPage.html")
-            con.execute("ROLLBACK")
-            con.close()
+
     else:
         return "Qualcosa è andato storto: " \
            "Cause:" \
@@ -139,12 +151,14 @@ def RegisterFunction():
 
 @app.route('/loginfunzione', methods=['GET', 'POST'])
 def LoginFunction():
-    global engine
-    con = engine.connect()
+
+    engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost/gym")
+    con = engine.connect()  # connessione aperta
+    con.connect()
+
     ru = select([utenti]).where(tuple_(utenti.c.email, utenti.c.password).in_([(request.form['email'], request.form['password'])]))
     u = con.execute(ru).fetchone()
     if u == None:
-        con.close()
         return "utente non  registrato, registarsi prima."
     else:
         utente = User(u[0], u[1], u[2], u[3],u[4])
@@ -153,7 +167,14 @@ def LoginFunction():
             flask_login.login_user(utente)
             q = ("select * from prenotazioni where prenotazioni.utente = ':x' ")
             resul = con.execute(q, {"x":utente.get_id()})
-            return render_template("areaRiservata_leMiePrenotazioni.html", current_user=current_user.is_authenticated,result=resul)
+            a = [0, 0, 1]
+            query_gym.insert_locale(utente,"prova",15,1412)
+            query_gym.insert_corso(utente,"Lol","lollo",1,1)
+            query_gym.insert_lezione(utente,1,"lol",None,25)
+            a[0]= query_gym.search_corso(1).id_corso
+            query_gym.delete_corso(utente,a[0])
+            return render_template("areaRiservata_leMiePrenotazioni.html", current_user=current_user.is_authenticated,result=a
+                                   )
         else:
             return "utente non autenticato"
 
