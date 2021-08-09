@@ -16,7 +16,7 @@ def set_istruttore():
     return 2
 
 
-engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost", echo=False)
+engine = create_engine("mysql+pymysql://anonimo:Anonimo1*%@localhost", echo=False)
 con = engine.connect()
 con.execute("create database if not exists gym ")
 if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//University-project-BD/gym"):
@@ -105,7 +105,7 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
 
     con.execute("GRANT SELECT,INSERT,DELETE,UPDATE ON gym.prenotazioni to 'Cliente'@'localhost'")
 
-    con.execute("set global activate_all_roles_on_login = on")  # attivazione di tutti i ruoli  (da decommentare dopo!)
+    #con.execute("set global activate_all_roles_on_login = on")  # attivazione di tutti i ruoli  (da decommentare dopo!)
 
 '''
 trigger = "CREATE TRIGGER email_bi" \

@@ -4,6 +4,7 @@
 <!-- Links in the navbar -->
 {% block navbar %}
 <ul class="navbar-nav" >
+    <!--
     <li class="nav-item">
         <a class="nav-link" href="{{url_for('nologin_Attivita')}}">Attività</a>
     </li>
@@ -13,6 +14,7 @@
     <li class="nav-item">
         <a class="nav-link" href="{{url_for('nologin_Contatti')}}">Contatti</a>
     </li>
+    -->
     <li class="nav-item">
         <a class="nav-link" href="{{url_for('Login')}}">Login</a>
     </li>
@@ -22,7 +24,93 @@
 </ul>
 {% endblock %}
 
+
 {% block body %}
-<h1> Homepage </h1>
+
+<img src="palestra1.jpg" align="center" width="80%">
+<br>
+
+<!-- descrizione palestra -->
+<h2>Info Palestra</h2>
+<p>Questa è la nostra palestra molto bella ed accessoriata. Costa molto ma il servizio è superbo ... <p>
+<br>
+
+
+<!-- orari palestra -->
+<h2>Orari Palestra</h2>
+<table border="1">
+    <thead>
+        <tr>
+            <th>Giorno</th>
+            <th>Orario apertura</th>
+            <th>Orario chiusura</th>
+        </tr>
+        <tbody>
+            <!-- lunedì -->
+            <tr>
+                <td>Lunedì</td>
+                <td>7:00</td>
+                <td>22:00</td>
+            </tr>
+            <!-- martedì -->
+            <tr>
+                <td>Martedì</td>
+                <td>7:00</td>
+                <td>22:00</td>
+            </tr>
+            <!-- mercoledì -->
+            <tr>
+                <td>Mercoledì</td>
+                <td>7:00</td>
+                <td>22:00</td>
+            </tr>
+            <!-- giovedì -->
+            <tr>
+                <td>Giovedì</td>
+                <td>7:00</td>
+                <td>22:00</td>
+            </tr>
+            <!-- venerdì -->
+            <tr>
+                <td>Venerdì</td>
+                <td>7:00</td>
+                <td>22:00</td>
+            </tr>
+            <!-- sabato -->
+            <tr>
+                <td>Sabato</td>
+                <td>9:00</td>
+                <td>20:00</td>
+            </tr>
+            <!-- domenica -->
+            <tr>
+                <td>Domenica</td>
+                <td>9:00</td>
+                <td>13:00</td>
+            </tr>
+        </tbody>
+    </thead>
+
+</table>
+<br>
+
+<!-- locali  (???)-->
+
+<!-- corsi (???)-->
+
+<!-- locali (???)-->
+
+<!-- contatti -->
+<h2>Contatti</h2>
+<p>
+    E-Mail: gymcovidfree@email.com
+    Telefono: 012 345 6789
+    Indirizzo: via delle palestre, Città 32410 (EE)
+<p>
+<br>
+
+
+
+
 
 {% endblock %}
