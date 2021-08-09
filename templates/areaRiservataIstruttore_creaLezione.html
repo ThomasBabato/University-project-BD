@@ -4,13 +4,13 @@
 {% block navbar %}
 <ul class="navbar-nav navbar-light">
     <li class="nav-item">
-        <a class="nav-link" href="">creaLezione</a>
+        <a class="nav-link" href="{{url_for('areaRiservataIstruttore_creaLezione')}}">creaLezione</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="">eliminaLezione</a>
+        <a class="nav-link" href="{{url_for('areaRiservataIstruttore_eliminaLezione')}}">eliminaLezione</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="">visioneLezioni</a>
+        <a class="nav-link" href="{{url_for('areaRiservataIstruttore_visioneLezioni')}}">visioneLezioni</a>
     </li>
     <!--  QUI SERVIREBBE UN TASTO LOGOUT - DA IMPLEMENTARE IN FASE DI FUSIONE CON IL BACKEND
     <li class="nav-item">
@@ -26,6 +26,7 @@
 
 <!-- Block body -->
 {% block body %}
+<h1 align="center">Crealezione</h1><br><br>
 <!-- CREA LEZIONI -->
 <div class="container">
     <div class="row">

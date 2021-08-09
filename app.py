@@ -85,23 +85,28 @@ class User(UserMixin):
 
 
 
+
+######################
+# PAGINE SENZA LOGIN #
+######################
+
+# pagina home
 @app.route("/")
 def nologin_Home():
     return render_template("nologin_homepage.html")
 
-
-
-# LOGIN PAGE
+# pagina di login
 @app.route("/login")
 def Login():
     return render_template("loginPage.html")
 
-# REGISTRATI
+# pagina di registrazione
 @app.route("/registrati")
 def Register():
     return render_template("register.html")
 
-
+# funzione per registrare un nuovo utente
+# funzione chiamata dopo la compilazione del form presente sulla pagina register
 @app.route("/registratiFunzione", methods=['GET', 'POST'])
 def RegisterFunction():
     engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost/gym")
@@ -138,6 +143,8 @@ def RegisterFunction():
            "       Non tutti i campi sono stati compilati."
 
 
+# funzione per permettere ad un utente già registrato di accedere alla sua area riservata
+# funzione chiamata dopo la compilazione del form presente sulla pagina login
 @app.route('/loginfunzione', methods=['GET', 'POST'])
 def LoginFunction():
 
@@ -168,6 +175,7 @@ def LoginFunction():
             return "utente non autenticato"
 
 
+# QUI RISULTA NECESSARIO SVILUPPARE QUESTA FUNZIONE SOTTOSTANTE AL MEGLIO!!!!!!!
 
 # Questa funzione serve per ridirezionare l'utente appena loggato alla sua pagina
 # in una fase successiva del progetto ci permetterà di mandare i due tipi di utenti diversi alle pagine
@@ -175,17 +183,18 @@ def LoginFunction():
 #TODO: aggiungere if per ruolo e indirizzare in modo corretto
 #@app.route('/areaRiservata', methods=["GET","POST"])
 #@login_required #richiede login
-#def areaRiservata():
+def areaRiservata():
     return redirect(url_for('areaRiservata_leMiePrenotazioni'))
+
+
+
 
 
 #############################
 # PAGINE PER UTENTI LOGGATI #
 #############################
 
-
-
-
+# per andare nella pagina dell'utente per visualizzare le sue prenotazioni
 @app.route('/areaRiservata_leMiePrenotazioni')
 @login_required
 def areaRiservata_leMiePrenotazioni():
@@ -198,66 +207,144 @@ def areaRiservata_leMiePrenotazioni():
     resul = con.execute(q)
     return render_template('areaRiservata_leMiePrenotazioni',current_user=current_user.is_authenticated)
 
+# per andare alla pagina dove è possibile effettuare una nuova prenotazione
+@app.route('/areaRiservataUtente_nuovaPrenotazione')
+@login_required
+def areaRiservataUtente_nuovaPrenotazione():
+    render_template('areaRiservataUtente_nuovaPrenotazione.html')
 
-
-
-
-
-
-
-
-
-# FUNZIONE PER EFFETTUARE UNA PRENOTAZIONE
-@app.route('/effettuaPrenotazione', methods=['GET', 'POST'])
+# funzione per effettuare una nuova prenotazione
+# funzione chiamata dopo la compilazione del form presente sulla pagina areaRiservataUtente_nuovaPrenotazione
+@app.route('/utenteEffettuaPrenotazione', methods=['GET', 'POST'])
 # @login_required
-def effettuaPrenotazione():
+def utenteEffettuaPrenotazione():
     # effettuare una prenotazione della lezione, dall'html mi ritorna l'id della lezione da prenotare
     flash("prenotazione effettuata con successo")
     return
 
-
-# CARICA LA PAGINA DELLE IMPOSTAZIONI
-@app.route('/areaRiservata_impostazioni')
-# @login.required
-def areaRiservata_impostazioni():
+# per andare alla pagina delle impostazioni
+@app.route('/areaRiservataUtente_impostazioni')
+@login.required
+def areaRiservataUtente_impostazioni():
     # recuperare l'ultimo tampone effettuato dall'utente con data e risultato
     # per passare il risultato si dovrebbe salvare il risultato della query in una variabile e poi passarla dentro a render_template insieme alla pagina html
-    return render_template("areaRiservata_impostazioni.html")
+    # sezione di codice in cui viene stampato a video il risultato dell'ultimo tampone è commentato per far in modo che funzioni. Appena è finito, decommentare il codice nell'html!!!
+    return render_template("areaRiservataUtente_impostazioni.html")
 
-
-# FUNZIONE PER INSERIRE IL RISULTATO DI UN TAMPONE
+# funzione per permettere ad un utente di inserire il risultato dell'ultimo tampone eseguito
+# funzione chiamata dopo la compilazione del form presente sulla pagina areaRiservataUtente_impostazioni
 @app.route('/inserisciRisultatoTampone', methods=['GET', 'POST'])
-# @login.required
+@login.required
 def inserisciRisultatoTampone():
     # recureare le info dell'inserimento del tampone ed inviarla al db
     flash("Inserimento avvenuto correttamente") #Messaggio a schermo che avvisa l'utente del corretto inserimento del risultato del tampone
     return render_template("areaRiservata_importazioni.html")
 
 
+
+
 ##############################
 # PAGINE PER GESTORE LOGGATO #
 ##############################
 
-# per andare nella pagina di gestione Lezione e Corsi del Gestore
-@app.route("/areaRiservataGestore_elimina.html")
-def areaRiservataGestore_elimina():
-    return render_template("areaRiservataGestore_elimina")
-
-# funzione eseguita quando si va ad eliminre una lezione sul pannello di gestione dei corsi del gestore
-@app.route("/eliminaLezione", methods=['GET', 'POST'])
+# per andare nella pagina di creazione Lezione e Corsi
+@app.route("/areaRiservataGestore_crea")
 #@login.required
-def eliminaLezione():
+def areaRiservataGestore_crea():
+    return render_template("areaRiservataGestore_crea.html")
+
+# funzione per creare un nuovo corso
+# funzione chiamata dopo la compilazione del form presente sulla pagina areaRiservataGestore_crea
+@app.route("/gestoreCreaCorso", methods=['GET', 'POST'])
+#@login.required
+def gestoreCreaCorso():
+    # recuperare i dati del form
+    # inserirli nel database
+    flash("Corso creato con successo")
+    return render_template("areaRiservataGestore_crea.html")
+
+# funzione per creare una nuova lezione di un corso già esistente
+# funzione chiamata dopo la compilazione del form presente sulla pagina areaRiservataGestore_crea
+@app.route("/gestoreCreaLezione", methods=['GET', 'POST'])
+#@login.required
+def gestoreCreaCorso():
+    # recuperare i dati del form
+    # inserirli nel database
+    flash("Lezione creata con successo")
+    return render_template("areaRiservataGestore_crea.html")
+
+
+# per andare nella pagina di eliminazione Lezione e Corsi
+@app.route("/areaRiservataGestore_elimina.html")
+#@login.required
+def areaRiservataGestore_elimina():
+    return render_template("areaRiservataGestore_elimina.html")
+
+# funzione per eliminare una lezione
+# funzione chiamata dopo la compilazione del form presente sulla pagina areaRiservataGestore_elimina
+@app.route("/gestoreEliminaLezione", methods=['GET', 'POST'])
+#@login.required
+def gestoreEliminaLezione():
     # recuperare i dati passati dalla pagina web (basta l'id della lezione)
     # e poi eliminare la lezione dal db
     flash("Lezione eliminata con successo")
     return render_template("areaRiservataGestore_gestioneLezioneCorsi.html")
 
-
-# funzione eseguita quando si va ad eliminre un corso sul pannello di gestione dei corsi del gestore
-@app.route("/eliminaCorso", methods=['GET', 'POST'])
+# funzione per eliminare una lezione
+# funzione chiamata dopo la compilazione del form presente sulla pagina areaRiservataGestore_elimina
+@app.route("/gestoreEliminaCorso", methods=['GET', 'POST'])
 #@login.required
 def eliminaCorso():
     # recuperare i dati passati dalla pagina web (basta l'id del corso)
     # e poi eliminare la lezione dal db
     flash("Corso eliminato con successo")
     return render_template("areaRiservataGestore_gestioneLezioneCorsi.html")
+
+
+
+
+#################################
+# PAGINE PER ISTRUTTORE LOGGATO #
+#################################
+
+# per andare nella pagina di creazione Lezione
+@app.route("/areaRiservataIstruttore_creaLezione")
+#@login.required
+def areaRiservataIstruttore_creaLezione():
+    return render_template("areaRiservataIstruttore_creaLezione.html")
+
+# funzione per creare un nuovo corso
+# funzione chiamata dopo la compilazione del form presente sulla pagina areaRiservataGestore_crea
+@app.route("/istruttoreCreaLezione", methods=['GET', 'POST'])
+#@login.required
+def istruttoreCreaLezione():
+    # recuperare i dati del form
+    # inserirli nel database
+    flash("Lezione creata con successo")
+    return render_template("areaRiservataIstruttore_creaLezione.html")
+
+
+# per andare nella pagina di eliminazione Lezione
+@app.route("/areaRiservataIstruttore_eliminaLezione")
+#@login.required
+def areaRiservataIstruttore_eliminaLezione():
+    return render_template("areaRiservataIstruttore_eliminaLezione.html")
+
+# funzione per eliminare una lezione
+# funzione chiamata dopo la compilazione del form presente sulla pagina areaRiservataIstruttore_eliminaLezione
+@app.route("/istruttoreEliminaLezione", methods=['GET', 'POST'])
+#@login.required
+def istruttoreCreaLezione():
+    # recuperare i dati del form
+    # inserirli nel database
+    flash("Lezione eliminata con successo")
+    return render_template("areaRiservataIstruttore_eliminaLezione.html")
+
+
+# funzione per visualizzare tutte le lezioni dell'istruttore
+# PER FARLO FUNZIONARE, DECOMMENTARE LA PARTE DI CODICE PRESENTE NELLA SUDDETTA PAGINA -->
+@app.route("/areaRiservataIstruttore_visioneLezioni")
+#@login.required
+def areaRiservataIstruttore_visioneLezioni():
+    # recuperare i dati da stampare
+    return render_template("areaRiservataIstruttore_visioneLezioni.html")

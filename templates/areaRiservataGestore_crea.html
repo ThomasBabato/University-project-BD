@@ -23,6 +23,8 @@
 
 <!-- Block body -->
 {% block body %}
+<h1 align="center">Crea</h1><br><br>
+
 <!-- CREA LEZIONI -->
 <div class="container">
     <div class="row">
@@ -37,7 +39,7 @@
 
             <div class="col-lg-12 login-form">
                 <div class="col-lg-12 login-form">
-                    <form action="" method="post">  <!-- aggiungere action per creare le lezioni -->
+                    <form action="{{url_for('gestoreCreaLezione')}}" method="post">
                         <input type="text" id="descrizionelezione" name="descrizionelezione" class="form-control" placeholder="descrizionelezione">
                             <!-- choose course -->
                             <select name = "dropdownMenuCourse">
@@ -76,7 +78,7 @@
 
             <div class="col-lg-12 login-form">
                 <div class="col-lg-12 login-form">
-                    <form action="" method="post">  <!-- aggiungere action per creare le lezioni -->
+                    <form action="{{url_for('gestoreCreaCorso')}}" method="post">
                         <input type="text" id="nomecorso" name="nomecorso" class="form-control" placeholder="nome corso">
                         <input type="text" id="descrizionecorso" name="descrizionecorso" class="form-control" placeholder="descrizionecorso">
                         <!-- choose teacher -->

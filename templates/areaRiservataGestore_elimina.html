@@ -22,12 +22,7 @@
 
 
 <!-- Block body -->
-{% block body %}
-{% if current_user.is_authenticated %}
-  Hi {{ current_user.name }}!
-<br> <br>
-
-
+<h1 align="center">Elimina</h1><br><br>
 
 <!-- ELIMINARE LEZIONI -->
 <h1 align="center"> Elimina Lezioni </h1>
@@ -54,7 +49,7 @@
                     <td>{{row['nomeLocale']}}</td>
                     <td>{{row['descrizione']}}</td>
                     <td>
-                        <form class="form-inline" action="{{url_for('eliminaLezione')}}" method="post">
+                        <form class="form-inline" action="{{url_for('gestoreEliminaLezione')}}" method="post">
                             <!-- Passaggio del codice del volo non visibile -->
                             <input type="hidden" name="lezione" value="{{row['idLezione']}}" />
                             <!-- Input per vedere i dettagli riguardanti un volo -->
@@ -93,7 +88,7 @@
                     <td>{{row['istruttore']}}</td>
                     <td>{{row['descrizione']}}</td>
                     <td>
-                        <form class="form-inline" action="{{url_for('eliminaCorso')}}" method="post">
+                        <form class="form-inline" action="{{url_for('gestoreEliminaCorso')}}" method="post">
                             <!-- Passaggio del codice del volo non visibile -->
                             <input type="hidden" name="lezione" value="{{row['idLezione']}}" />
                             <!-- Input per vedere i dettagli riguardanti un volo -->
@@ -107,6 +102,4 @@
         </thead>
     </table>
 </div>
-
-{% endif %}
 {% endblock %}

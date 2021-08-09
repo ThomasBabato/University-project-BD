@@ -4,13 +4,13 @@
 {% block navbar %}
 <ul class="navbar-nav navbar-light">
     <li class="nav-item">
-        <a class="nav-link" href="">creaLezione</a>
+        <a class="nav-link" href="{{url_for('areaRiservataIstruttore_creaLezione')}}">creaLezione</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="">eliminaLezione</a>
+        <a class="nav-link" href="{{url_for('areaRiservataIstruttore_eliminaLezione')}}">eliminaLezione</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="">visioneLezioni</a>
+        <a class="nav-link" href="{{url_for('areaRiservataIstruttore_visioneLezioni')}}">visioneLezioni</a>
     </li>
     <!--  QUI SERVIREBBE UN TASTO LOGOUT - DA IMPLEMENTARE IN FASE DI FUSIONE CON IL BACKEND
     <li class="nav-item">
@@ -26,8 +26,7 @@
 
 <!-- Block body -->
 {% block body %}
-<h1 align="center"> Visualizza Lezioni </h1>
-<br><br>
+<h1 align="center">VisioneLezioni</h1><br><br>
 
 
 <div class="table-responsive table-responsive-data2">
@@ -41,7 +40,10 @@
                 <th>descrizione</th> <!-- relativa alla singola lezione -->
             </tr>
             <tbody>
-                <!-- ciclo per mostrare tutte le prenotazioni del cliente -->
+                <!-- ciclo per mostrare tutte le prenotazioni del cliente
+
+                <!-- QUESTO CODICE È DA DECOMMENTARE NEL MOMENTO IN CUI GLI PASSIAMO I DATI DA STAMPARE, ALTRIMENTI VA IN ERRORE!
+
                 {% for row in result %}
                 <tr class="tr-shadow">
                     <td>{{row['idLezione']}}</td>
@@ -51,7 +53,7 @@
                     <td>{{row['descrizione']}}</td>
                 </tr>
                 {% endfor %}
-
+                -->
             </tbody>
         </thead>
     </table>

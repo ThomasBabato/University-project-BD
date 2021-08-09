@@ -4,13 +4,13 @@
 {% block navbar %}
 <ul class="navbar-nav navbar-light">
     <li class="nav-item">
-        <a class="nav-link" href="">creaLezione</a>
+        <a class="nav-link" href="{{url_for('areaRiservataIstruttore_creaLezione')}}">creaLezione</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="">eliminaLezione</a>
+        <a class="nav-link" href="{{url_for('areaRiservataIstruttore_eliminaLezione')}}">eliminaLezione</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="">visioneLezioni</a>
+        <a class="nav-link" href="{{url_for('areaRiservataIstruttore_visioneLezioni')}}">visioneLezioni</a>
     </li>
     <!--  QUI SERVIREBBE UN TASTO LOGOUT - DA IMPLEMENTARE IN FASE DI FUSIONE CON IL BACKEND
     <li class="nav-item">
@@ -26,8 +26,7 @@
 
 <!-- Block body -->
 {% block body %}
-<h1 align="center"> Elimina Lezioni </h1>
-<br><br>
+<h1 align="center">Eliminalezione</h1><br><br>
 
 
 <div class="table-responsive table-responsive-data2">
@@ -50,7 +49,7 @@
                     <td>{{row['nomeLocale']}}</td>
                     <td>{{row['descrizione']}}</td>
                     <td>
-                        <form class="form-inline" action="" method="post">
+                        <form class="form-inline" action="{{url_for('istruttoreEliminaLezione')}}" method="post">
                             <!-- Passaggio del codice del volo non visibile -->
                             <input type="hidden" name="lezione" value="{{row['idLezione']}}" />
                             <!-- Input per vedere i dettagli riguardanti un volo -->
