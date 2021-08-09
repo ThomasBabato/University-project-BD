@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+<!-- Links in the navbar -->
+{% block navbar %}
+<ul class="navbar-nav navbar-light">
+    <li class="nav-item">
+        <a class="nav-link" href="">creaLezione</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="">eliminaLezione</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="">visioneLezioni</a>
+    </li>
+    <!--  QUI SERVIREBBE UN TASTO LOGOUT - DA IMPLEMENTARE IN FASE DI FUSIONE CON IL BACKEND
+    <li class="nav-item">
+        <form class="form-inline my-2 my-lg-0" action="" method="post">
+
+            <input id="login" class="btn btn-light" type="submit" disabled name="Login" value="Login" />
+        </form>
+    </li>
+    -->
+</ul>
+{% endblock %}
+
+
+<!-- Block body -->
+{% block body %}
+<h1 align="center"> Visualizza Lezioni </h1>
+<br><br>
+
+
+<div class="table-responsive table-responsive-data2">
+    <table class="table table-data2">
+        <thead>
+            <tr>
+                <th>idLezione</th>
+                <th>data</th>
+                <th>nomeCorso</th>
+                <th>nomeLocale</th>
+                <th>descrizione</th> <!-- relativa alla singola lezione -->
+            </tr>
+            <tbody>
+                <!-- ciclo per mostrare tutte le prenotazioni del cliente -->
+                {% for row in result %}
+                <tr class="tr-shadow">
+                    <td>{{row['idLezione']}}</td>
+                    <td>{{row['data']}}</td>
+                    <td>{{row['nomeCorso']}}</td>
+                    <td>{{row['nomeLocale']}}</td>
+                    <td>{{row['descrizione']}}</td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+        </thead>
+    </table>
+</div>
+{% endblock %}
