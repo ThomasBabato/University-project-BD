@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+<!-- Links in the navbar -->
+{% block navbar %}
+<ul class="navbar-nav navbar-light">
+    <li class="nav-item">
+        <a class="nav-link" href="{{url_for('areaRiservataGestore_elimina')}}">Elimina</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{url_for('areaRiservataGestore_crea')}}">Crea</a>
+    </li>
+    <!--  QUI SERVIREBBE UN TASTO LOGOUT - DA IMPLEMENTARE IN FASE DI FUSIONE CON IL BACKEND
+    <li class="nav-item">
+        <form class="form-inline my-2 my-lg-0" action="" method="post">
+
+            <input id="login" class="btn btn-light" type="submit" disabled name="Login" value="Login" />
+        </form>
+    </li>
+    -->
+</ul>
+{% endblock %}
+
+
+<!-- Block body -->
+{% block body %}
+# CREA LEZIONI
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3 col-md-2"></div>
+        <div class="col-lg-6 col-md-8 login-box">
+            <div class="col-lg-12 login-key">
+                <i class="fa fa-key" aria-hidden="true"></i>
+            </div>
+            <h1 align="center"> Crea Lezioni </h1>
+
+            <br> <br>
+
+            <div class="col-lg-12 login-form">
+                <div class="col-lg-12 login-form">
+                    <form action="" method="post">  <!-- aggiungere action per creare le lezioni -->
+                        <input type="text" id="descrizionelezione" name="descrizionelezione" class="form-control" placeholder="descrizionelezione">
+                            <!-- choose course -->
+                            <select name = "dropdownMenuCourse">
+                                {% for row in course %}
+                                    <option value = "{{row['idcorso']}}">{{row['nomecorso']}}</option>
+                                {% endfor %}
+                            </select>
+                            <!-- choose room -->
+                            <select name = "dropdownMenuRoom">
+                                {% for row in room %}
+                                    <option value = "{{row['idstanza']}}">{{row['nomestanza']}}</option>
+                                {% endfor %}
+                            </select>
+                        <input class="btn btn-lg btn-primary btn-block" type="submit" value="CreaLezione" name="CreaLezione" />
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-2"></div>
+        </div>
+    </div>
+</div>
+<br><br>
+
+
+# CREA CORSI
+<div class="container">
+    <div class="row">
+        <div class="col-lg-3 col-md-2"></div>
+        <div class="col-lg-6 col-md-8 login-box">
+            <div class="col-lg-12 login-key">
+                <i class="fa fa-key" aria-hidden="true"></i>
+            </div>
+            <h1 align="center"> Crea Corsi </h1>
+
+            <br> <br>
+
+            <div class="col-lg-12 login-form">
+                <div class="col-lg-12 login-form">
+                    <form action="" method="post">  <!-- aggiungere action per creare le lezioni -->
+                        <input type="text" id="nomecorso" name="nomecorso" class="form-control" placeholder="nome corso">
+                        <input type="text" id="descrizionecorso" name="descrizionecorso" class="form-control" placeholder="descrizionecorso">
+                        <!-- choose teacher -->
+                        <select name = "dropdownMenuTeacher">
+                            {% for row in room %}
+                                <option value = "{{row['idistruttore']}}">{{row['nomeistruttore']}}</option>
+                            {% endfor %}
+                        </select>
+                        <input class="btn btn-lg btn-primary btn-block" type="submit" value="CreaCorso" name="CreaCorso" />
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-2"></div>
+        </div>
+    </div>
+</div>
+<br><br>
+
+
+
+
+
+{% endblock %}

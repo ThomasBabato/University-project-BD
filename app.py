@@ -239,9 +239,9 @@ def inserisciRisultatoTampone():
 ##############################
 
 # per andare nella pagina di gestione Lezione e Corsi del Gestore
-@app.route("/areaRiservataGestore_gestioneLezioneCorsi.html")
-def areaRiservataGestore_gestioneLezioneCorsi():
-    return render_template("areaRiservataGestore_gestioneLezioneCorsi")
+@app.route("/areaRiservataGestore_elimina.html")
+def areaRiservataGestore_elimina():
+    return render_template("areaRiservataGestore_elimina")
 
 # funzione eseguita quando si va ad eliminre una lezione sul pannello di gestione dei corsi del gestore
 @app.route("/eliminaLezione", methods=['GET', 'POST'])
