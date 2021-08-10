@@ -16,7 +16,7 @@ def set_istruttore():
     return 2
 
 
-engine = create_engine("mysql+pymysql://anonimo:Anonimo1*%@localhost", echo=False)
+engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost", echo=False)
 con = engine.connect()
 con.execute("create database if not exists gym ")
 if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//University-project-BD/gym"):
