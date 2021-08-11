@@ -195,9 +195,9 @@ def areaRiservata():
 #############################
 
 # per andare nella pagina dell'utente per visualizzare le sue prenotazioni
-@app.route('/areaRiservata_leMiePrenotazioni')
+@app.route('/areaRiservataUtente_leMiePrenotazioni')
 @login_required
-def areaRiservata_leMiePrenotazioni():
+def areaRiservataUtente_leMiePrenotazioni():
     global engine, current_user
     con = engine.connect() #apro una connessione
     # query = inserire query per vedere le prenotazioni dei diversi clienti
@@ -205,7 +205,7 @@ def areaRiservata_leMiePrenotazioni():
     #if current_user.is_authenticated == True:
     q = select([prenotazioni]).where(prenotazioni.c.utente).in_('1')
     resul = con.execute(q)
-    return render_template('areaRiservata_leMiePrenotazioni',current_user=current_user.is_authenticated)
+    return render_template('areaRiservataUtente_leMiePrenotazioni',current_user=current_user.is_authenticated)
 
 # per andare alla pagina dove è possibile effettuare una nuova prenotazione
 @app.route('/areaRiservataUtente_nuovaPrenotazione')
