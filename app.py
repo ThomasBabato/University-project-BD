@@ -75,6 +75,9 @@ class User(UserMixin):
     def get_ruolo(self):
         return self.ruolo
 
+    def get_email(self):
+        return self.email
+
 
     def get_userwithid(self):
         if self is not None:
@@ -128,10 +131,9 @@ def RegisterFunction():
                 tuple_(utenti.c.email, utenti.c.password).in_([(request.form['email'], request.form['password'])]))
             u = con.execute(ru).fetchone()
 
-            con.execute("create user "+u[3]+"@'localhost' identified by "+"'"+u[4]+"'")
-            con.execute("commit")
-
-            #con.execute("grant 'Cliente'@'localhost' to "+"'"+u[3]+"'"+"@'localhost'")
+            con.execute("create user "+"'"+u[3]+"'"+"@'localhost' identified by "+"'"+u[4]+"';")
+            con.execute("flush privileges ")
+            con.execute("grant 'Cliente'@'localhost' to "+"'"+u[3]+"'"+"@'localhost'")
             con.execute("flush privileges ")
             con.execute("commit")
             return render_template("loginPage.html")
@@ -163,13 +165,7 @@ def LoginFunction():
             flask_login.login_user(utente)
             q = ("select * from prenotazioni where prenotazioni.utente = ':x' ")
             resul = con.execute(q, {"x":utente.get_id()})
-            a = [0, 0, 1]
-            query_gym.insert_locale(utente,"prova",15,1412)
-            query_gym.insert_corso(utente,"Lol","lollo",1,1)
-            query_gym.insert_lezione(utente,1,"lol",None,25)
-            a[0]= query_gym.search_corso(1).id_corso
-            query_gym.delete_corso(utente,a[0])
-            return render_template("areaRiservata_leMiePrenotazioni.html", current_user=current_user.is_authenticated,result=a
+            return render_template("areaRiservataUtente_leMiePrenotazioni.html", current_user=current_user.is_authenticated,result=resul
                                    )
         else:
             return "utente non autenticato"
@@ -184,7 +180,7 @@ def LoginFunction():
 #@app.route('/areaRiservata', methods=["GET","POST"])
 #@login_required #richiede login
 def areaRiservata():
-    return redirect(url_for('areaRiservata_leMiePrenotazioni'))
+    return redirect(url_for('areaRiservataUtente_leMiePrenotazioni'))
 
 
 
@@ -224,7 +220,7 @@ def utenteEffettuaPrenotazione():
 
 # per andare alla pagina delle impostazioni
 @app.route('/areaRiservataUtente_impostazioni')
-@login.required
+@login_required
 def areaRiservataUtente_impostazioni():
     # recuperare l'ultimo tampone effettuato dall'utente con data e risultato
     # per passare il risultato si dovrebbe salvare il risultato della query in una variabile e poi passarla dentro a render_template insieme alla pagina html
@@ -234,7 +230,7 @@ def areaRiservataUtente_impostazioni():
 # funzione per permettere ad un utente di inserire il risultato dell'ultimo tampone eseguito
 # funzione chiamata dopo la compilazione del form presente sulla pagina areaRiservataUtente_impostazioni
 @app.route('/inserisciRisultatoTampone', methods=['GET', 'POST'])
-@login.required
+@login_required
 def inserisciRisultatoTampone():
     # recureare le info dell'inserimento del tampone ed inviarla al db
     flash("Inserimento avvenuto correttamente") #Messaggio a schermo che avvisa l'utente del corretto inserimento del risultato del tampone
@@ -249,7 +245,7 @@ def inserisciRisultatoTampone():
 
 # per andare nella pagina di creazione Lezione e Corsi
 @app.route("/areaRiservataGestore_crea")
-#@login.required
+@login_required
 def areaRiservataGestore_crea():
     return render_template("areaRiservataGestore_crea.html")
 
@@ -267,7 +263,7 @@ def gestoreCreaCorso():
 # funzione chiamata dopo la compilazione del form presente sulla pagina areaRiservataGestore_crea
 @app.route("/gestoreCreaLezione", methods=['GET', 'POST'])
 #@login.required
-def gestoreCreaCorso():
+def gestoreCrealezione():
     # recuperare i dati del form
     # inserirli nel database
     flash("Lezione creata con successo")
@@ -334,7 +330,7 @@ def areaRiservataIstruttore_eliminaLezione():
 # funzione chiamata dopo la compilazione del form presente sulla pagina areaRiservataIstruttore_eliminaLezione
 @app.route("/istruttoreEliminaLezione", methods=['GET', 'POST'])
 #@login.required
-def istruttoreCreaLezione():
+def istruttoreEliminaLezione():
     # recuperare i dati del form
     # inserirli nel database
     flash("Lezione eliminata con successo")

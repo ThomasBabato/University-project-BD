@@ -43,14 +43,14 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
               Column('nome', String(25)),
               PrimaryKeyConstraint('id_corso','nome',name='corsi_pk'),
               Column('descrizione', String(150)),
-              Column('istruttore',None,ForeignKey('utenti.id_utente'),nullable=True),
+              Column('istruttore',None,ForeignKey('utenti.id_utente',ondelete="CASCADE"),nullable=True),
               Column('locale',None,ForeignKey('locali.id_locale'))
               )
 
     Base = declarative_base()
     corsi_seguiti = Table('corsi_seguiti',metadata,
-                    Column('utente',ForeignKey('utenti.id_utente')),
-                    Column('corso_id',ForeignKey('corsi.id_corso')),
+                    Column('utente',ForeignKey('utenti.id_utente',ondelete="Cascade")),
+                    Column('corso_id',ForeignKey('corsi.id_corso',ondelete="Cascade")),
                     )
 
 
@@ -63,18 +63,18 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
 
     lezioni = Table('lezioni',metadata,
                     Column('id_lezione', Integer, primary_key=True, autoincrement=True),
-                    Column('codice_corso', ForeignKey('corsi.id_corso'),nullable=False),
+                    Column('codice_corso', ForeignKey('corsi.id_corso',ondelete="Cascade"),nullable=False),
                     Column('descrizione', String(120)),
                     Column('Data_e_ora',DateTime), #formato yy/mm/gg hh/mm
                     Column('persone_consentite',Integer)
                     )
 
     prenotazioni= Table('prenotazioni',metadata,
-                        Column('utente',None,ForeignKey('utenti.id_utente'),
+                        Column('utente',None,ForeignKey('utenti.id_utente',ondelete="Cascade"),
                                nullable=False),
-                        Column('corso',None,ForeignKey('corsi.id_corso'),
+                        Column('corso',None,ForeignKey('corsi.id_corso',ondelete="Cascade"),
                                nullable=False),
-                        Column('lezione',None,ForeignKey('lezioni.id_lezione'))
+                        Column('lezione',None,ForeignKey('lezioni.id_lezione',ondelete="Cascade"))
                         )
 
     metadata.create_all(engine)
@@ -105,17 +105,4 @@ if not database.database_exists("mysql+pymysql://anonimo:Anonimo1%@localhost//Un
 
     con.execute("GRANT SELECT,INSERT,DELETE,UPDATE ON gym.prenotazioni to 'Cliente'@'localhost'")
 
-    #con.execute("set global activate_all_roles_on_login = on")  # attivazione di tutti i ruoli  (da decommentare dopo!)
-
-'''
-trigger = "CREATE TRIGGER email_bi" \
-          "before Insert on gym.utenti for each row " \
-          " begin" \
-          "     if new.email != '_@gmail.com' then " \
-          "         ROLLEBACK;" \
-          "     end if;" \
-          " end;" \
-          "delimiter ;"
-
-con.execute(trigger)
-'''
+    con.execute("set global activate_all_roles_on_login = on")  # attivazione di tutti i ruoli  (da decommentare dopo!)
