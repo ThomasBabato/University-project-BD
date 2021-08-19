@@ -4,13 +4,13 @@
 {% block navbar %}
 <ul class="navbar-nav navbar-light">
     <li class="nav-item">
-        <a class="nav-link" href="{{url_for('le_mie_prenotazioni')}}">Le mie prenotazioni</a>
+        <a class="nav-link" href="{{url_for('areaRiservataUtente_leMiePrenotazioni')}}">Le mie prenotazioni</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="{{url_for('nuova_prenotazione')}}">Nuova prenotazione</a>
+        <a class="nav-link" href="{{url_for('areaRiservataUtente_nuovaPrenotazione')}}">Nuova prenotazione</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="{{url_for('impostazioni')}}">Impostazioni</a>
+        <a class="nav-link" href="{{url_for('areaRiservataUtente_impostazioni')}}">Impostazioni</a>
     </li>
     <!--  QUI SERVIREBBE UN TASTO LOGOUT - DA IMPLEMENTARE IN FASE DI FUSIONE CON IL BACKEND
     <li class="nav-item">

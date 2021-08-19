@@ -93,6 +93,13 @@ class User(UserMixin):
 # PAGINE SENZA LOGIN #
 ######################
 
+# funzione evocata al momento della compilazione del form sulla pagina principale
+# funzione necessaria per recuperare le credenziali del db
+@app.route("/accediDb", methods=['GET', 'POST'])
+def accediDb():
+    # codice per accedere al db con le credenziali passate dall'html
+    return return render_template("register.html")  # appena inseriti i dati ho fatto che porta l'utente alla pagina di registrazione
+
 # pagina home
 @app.route("/")
 def nologin_Home():
