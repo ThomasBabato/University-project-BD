@@ -1,26 +1,12 @@
 import flask_login
-from flask import Flask, render_template, flash, request
-from sqlalchemy import create_engine, MetaData, inspect, ForeignKeyConstraint, PrimaryKeyConstraint, select, tuple_, \
-    text
-from sqlalchemy import inspect,Table, Column, Integer, String, MetaData, ForeignKey,Float,DateTime,Date,Boolean
-from  sqlalchemy_utils.functions import database
-from sqlalchemy_utils.types import email
-from db import utenti,locali,lezioni,corsi_seguiti,engine,corsi,prenotazioni
-import db
-import pymysql
-from pymysql import *
-import query_gym
-from query_gym import change_role
-from utils_db import *
-from flask_login import LoginManager, login_required, login_user, UserMixin, login_manager, logout_user, current_user
-from  utils_db import *
-from flask_login import user_loaded_from_request
 from flask import Flask
-from flask import redirect, abort, url_for
-from sqlalchemy.orm import *
-import re
+from flask import redirect, url_for
+from flask import render_template, flash, request
+from flask_login import LoginManager, login_required, UserMixin,current_user
+from sqlalchemy import tuple_
 
-
+import db
+from utils_db import *
 
 app = Flask(__name__)
 app.config['SECRET_KEY']='THIS IS SECRET KEY1121312'
@@ -47,9 +33,11 @@ sezione login
 '''
 login_manager = LoginManager()
 login_manager.init_app(app)
-engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost/gym")
+global utenti, locali, lezioni, corsi_seguiti, engine, corsi, prenotazioni,con
 
-con = engine.connect()
+#engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost/gym")
+
+#con = engine.connect()
 
 
 
@@ -97,8 +85,20 @@ class User(UserMixin):
 # funzione necessaria per recuperare le credenziali del db
 @app.route("/accediDb", methods=['GET', 'POST'])
 def accediDb():
+    nome = request.form['username']
+    paswd = request.form['password']
+    db = create_db(nome,paswd)
+    global utenti, locali, lezioni, corsi_seguiti, engine, corsi, prenotazioni,con
+    utenti = db[0]
+    locali = db[1]
+    lezioni = db[2]
+    corsi_seguiti = db[3]
+    engine = db[4]
+    corsi = db[5]
+    prenotazioni = db[6]
+    con = db[7]
     # codice per accedere al db con le credenziali passate dall'html
-    return return render_template("register.html")  # appena inseriti i dati ho fatto che porta l'utente alla pagina di registrazione
+    return render_template("register.html")  # appena inseriti i dati ho fatto che porta l'utente alla pagina di registrazione
 
 # pagina home
 @app.route("/")
@@ -124,7 +124,6 @@ def RegisterFunction():
     con = engine.connect()  # connessione aperta
     con.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE")  # livello di isolamento SERIALIZABLE
     con.execute("START TRANSACTION")  # inizio transazione
-
 
     # ricerco prima la mail usando una select, poi successivamente provo a inserire i dati nel databases;
     q = text("select utenti.email from utenti where email = :x")
@@ -156,7 +155,7 @@ def RegisterFunction():
 # funzione chiamata dopo la compilazione del form presente sulla pagina login
 @app.route('/loginfunzione', methods=['GET', 'POST'])
 def LoginFunction():
-
+    global utenti, locali, lezioni, corsi_seguiti, engine, corsi, prenotazioni, con
     engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost/gym")
     con = engine.connect()  # connessione aperta
     con.connect()

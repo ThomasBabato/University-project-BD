@@ -1,6 +1,6 @@
 from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
-from db import engine
+from app import engine
 
 base = automap_base()
 base.prepare(engine,reflect=True)

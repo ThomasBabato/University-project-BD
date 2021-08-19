@@ -7,7 +7,7 @@ from sqlalchemy import update, func, insert,delete,values,or_,select,and_
 from flask_login import current_user
 from select import *
 from sqlalchemy.orm import sessionmaker
-from db import utenti,prenotazioni, Ruoli,con,corsi,lezioni,locali, corsi_seguiti
+from db import Ruoli
 from orm_automap import *
 
 #TODO: tutte le query ritornano 1 o 0 solo per debug! rimuovre i ruturn quando si finisce
