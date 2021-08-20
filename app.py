@@ -57,7 +57,7 @@ class User(UserMixin):
         self.ruolo = "Cliente"
 
     def get_id(self):
-        return self.id
+        return self.id[0]
 
 
     def get_ruolo(self):
@@ -156,7 +156,6 @@ def RegisterFunction():
 @app.route('/loginfunzione', methods=['GET', 'POST'])
 def LoginFunction():
     global utenti
-    utenti = utenti
 
     engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost/gym")
     con = engine.connect()  # connessione aperta
@@ -170,9 +169,8 @@ def LoginFunction():
         if load_user(utente):
             engine.connect("mysql+pymysql://"+str(utente.email)+":"+str(utente.passw)+"@localhost/gym")
             flask_login.login_user(utente)
-            q = ("select * from prenotazioni where utente = ':x'")
+            q = text("select * from prenotazioni where utente = ':x'")
             resul = con.execute(q, {"x":utente.get_id()})
-
             return render_template("areaRiservataUtente_leMiePrenotazioni.html", current_user=current_user.is_authenticated,result=resul
                                    )
         else:
