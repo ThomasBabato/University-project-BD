@@ -1,4 +1,7 @@
 import flask_login
+
+import query_gym
+from query_gym import *
 from flask import Flask
 from flask import redirect, url_for
 from flask import render_template, flash, request
@@ -33,11 +36,8 @@ sezione login
 '''
 login_manager = LoginManager()
 login_manager.init_app(app)
-global utenti, locali, lezioni, corsi_seguiti, engine, corsi, prenotazioni,con
+global utenti, locali, lezioni, corsi_seguiti, g_engine, corsi, prenotazioni,con
 
-#engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost/gym")
-
-#con = engine.connect()
 
 
 
@@ -88,16 +88,16 @@ def accediDb():
     nome = request.form['username']
     paswd = request.form['password']
     db = create_db(nome,paswd)
-    global utenti, locali, lezioni, corsi_seguiti, engine, corsi, prenotazioni,con
+    global utenti, locali, lezioni, corsi_seguiti, g_engine, corsi, prenotazioni,con
     utenti = db[0]
     locali = db[1]
     lezioni = db[2]
     corsi_seguiti = db[3]
-    engine = db[4]
+    g_engine = db[4]
     corsi = db[5]
     prenotazioni = db[6]
     con = db[7]
-    # codice per accedere al db con le credenziali passate dall'html
+    #codice per accedere al db con le credenziali passate dall'html
     return render_template("register.html")  # appena inseriti i dati ho fatto che porta l'utente alla pagina di registrazione
 
 # pagina home
@@ -155,11 +155,12 @@ def RegisterFunction():
 # funzione chiamata dopo la compilazione del form presente sulla pagina login
 @app.route('/loginfunzione', methods=['GET', 'POST'])
 def LoginFunction():
-    global utenti, locali, lezioni, corsi_seguiti, engine, corsi, prenotazioni, con
+    global utenti
+    utenti = utenti
+
     engine = create_engine("mysql+pymysql://anonimo:Anonimo1%@localhost/gym")
     con = engine.connect()  # connessione aperta
     con.connect()
-
     ru = select([utenti]).where(tuple_(utenti.c.email, utenti.c.password).in_([(request.form['email'], request.form['password'])]))
     u = con.execute(ru).fetchone()
     if u == None:
@@ -169,8 +170,9 @@ def LoginFunction():
         if load_user(utente):
             engine.connect("mysql+pymysql://"+str(utente.email)+":"+str(utente.passw)+"@localhost/gym")
             flask_login.login_user(utente)
-            q = ("select * from prenotazioni where prenotazioni.utente = ':x' ")
+            q = ("select * from prenotazioni where utente = ':x'")
             resul = con.execute(q, {"x":utente.get_id()})
+
             return render_template("areaRiservataUtente_leMiePrenotazioni.html", current_user=current_user.is_authenticated,result=resul
                                    )
         else:
@@ -263,7 +265,7 @@ def gestoreCreaCorso():
     # recuperare i dati del form
     # inserirli nel database
     flash("Corso creato con successo")
-    return render_template("areaRiservataGestore_crea.html")
+    return render_template("areaRiservataGestore_crea.html",current_user=current_user.is_authenticated)
 
 # funzione per creare una nuova lezione di un corso già esistente
 # funzione chiamata dopo la compilazione del form presente sulla pagina areaRiservataGestore_crea

@@ -108,5 +108,4 @@ def create_db(nome,paswd):
         con.execute("GRANT SELECT,INSERT,DELETE,UPDATE ON gym.prenotazioni to 'Cliente'@'localhost'")
 
         con.execute("set global activate_all_roles_on_login = on")  # attivazione di tutti i ruoli  (da decommentare dopo!)
-
         return utenti,locali,lezioni,corsi_seguiti,engine,corsi,prenotazioni,con
